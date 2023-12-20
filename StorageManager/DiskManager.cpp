@@ -77,7 +77,7 @@ void DiskManager::writePage(uint64 pageID, char *buffer) {
 
 void DiskManager::createFreePage() {
   char *buffer = new char[pageSize];
-  for(int i = 0; i < pageSize; i++) {
+  for(unsigned int i = 0; i < pageSize; i++) {
     buffer[i] = (char) 0;
   }
   fileManager->seek(0, END);

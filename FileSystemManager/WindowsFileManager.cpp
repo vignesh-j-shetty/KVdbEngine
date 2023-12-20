@@ -13,7 +13,7 @@ WindowsFileManager::~WindowsFileManager() {
 }
 
 bool WindowsFileManager::open() {
-    hFile = CreateFileA(cfileName, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    hFile = CreateFileA(cfileName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     return hFile != INVALID_HANDLE_VALUE;
 }
 
@@ -46,6 +46,7 @@ void WindowsFileManager::seek(uint64 pos, SeekType type) {
 uint32 WindowsFileManager::write(void *buffer, int count) {
     DWORD dwBytesWritten;
     if (!WriteFile(hFile, buffer, count, &dwBytesWritten, NULL)) {
+        std::cout<<"Write failed :"<<GetLastError()<<std::endl;
         return 0;
     }
     return static_cast<uint32>(dwBytesWritten);
