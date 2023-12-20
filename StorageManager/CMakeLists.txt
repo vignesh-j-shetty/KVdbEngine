@@ -1,0 +1,12 @@
+add_library(DiskManager DiskManager.cpp ${HEADER_FILE})
+target_include_directories(DiskManager PRIVATE ${CMAKE_SOURCE_DIR}/FileSystemManager)
+
+if(WIN32)
+    target_link_libraries(DiskManager PRIVATE WindowsFileManager)
+    add_definitions(-DWIN32)
+elseif(UNIX)
+    target_link_libraries(DiskManager PRIVATE UnixFileManager)
+    add_definitions(-DUNIX)
+else()
+    message(FATAL_ERROR "Unsupported operating system")
+endif()
