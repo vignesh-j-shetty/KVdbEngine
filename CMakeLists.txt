@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-
+set (CMAKE_CXX_STANDARD 17)
 project(KVdbEngine)
 add_executable(main main.cpp)
 
@@ -8,5 +8,4 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/FileSystemManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/StorageManager)
 
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
-target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/FileSystemManager)
 target_link_libraries(main DiskManager)
