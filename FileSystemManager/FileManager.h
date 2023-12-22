@@ -14,13 +14,13 @@ class FileManager {
 
     virtual bool exists() = 0;
 
-    virtual void seek(uint64 pos, SeekType type) = 0;
+    virtual uint64 seek(uint64 pos, SeekType type) = 0;
 
     virtual uint32 write(void *buffer, int count) = 0;
 
     virtual uint32 read(void *buffer, int count) = 0;
 
-    virtual uint64 currentPosition() = 0;
+    virtual uint64 getCurrentPosition() = 0;
 
     virtual void close() = 0;
 

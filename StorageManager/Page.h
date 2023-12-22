@@ -4,6 +4,8 @@
 #include<memory>
 #include "StorageManagerCommon.h"
 #include "TypeDefs.h"
+#include "PageSlotIterator.h"
+
 class DiskManager;
 class Page {
     public:

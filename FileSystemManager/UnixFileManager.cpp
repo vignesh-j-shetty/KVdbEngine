@@ -53,7 +53,7 @@ bool UnixFileManager::exists() {
     return true;
 }
 
-void UnixFileManager::seek(uint64 pos, SeekType type) {
+uint64 UnixFileManager::seek(uint64 pos, SeekType type) {
     switch (type) {
         case SET:
         position = lseek(fd,pos,SEEK_SET);
@@ -67,6 +67,7 @@ void UnixFileManager::seek(uint64 pos, SeekType type) {
         default:
         break;
     }
+    return position;
 }
 
 uint32 UnixFileManager::write(void *buffer, int count) {
@@ -77,7 +78,7 @@ uint32 UnixFileManager::read(void *buffer, int count) {
     return read_(fd,buffer,count);
 }
 
-uint64 UnixFileManager::currentPosition() {
+uint64 UnixFileManager::getCurrentPosition() {
     return position;
 }
 

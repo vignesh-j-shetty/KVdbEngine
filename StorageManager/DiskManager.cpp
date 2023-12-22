@@ -11,57 +11,49 @@ DiskManager::DiskManager(const char *fileName) {
   #else
   fileManager = new UnixFileManager(fileName);
   #endif
-  temporaryBuffer = new char[DISKMANAGER_HEADERSIZE];
+  temporaryBuffer = new char[DISKMANAGER_PAGESIZE];
   if(fileManager->exists() == false) {
     //Create header
     assert(fileManager->open());
-    headFreePageID = headAllocatedPageID = DISK_NULL;
+    headFreePageID = rootPageID = DISK_NULL;
     updateHeader();
     std::cout<<"New db file successfully created"<<std::endl;
   } else {
-    //Setup Header values
-    fileManager->open();
-    char *buffer = temporaryBuffer;
-    fileManager->read(buffer, DISKMANAGER_HEADERSIZE);
-    memcpy(&headAllocatedPageID, buffer, 8);
-    memcpy(&headFreePageID, buffer + 8, 8);
-    delete[] buffer;
+    assert(fileManager->open());
+    //Read from header
+    readHeader();
+    createRootPage();
   }
 }
 
 DiskManager::~DiskManager() throw() {
   delete fileManager;
+  delete[] temporaryBuffer;
 }
 
 void DiskManager::updateHeader() {
   /*
   Header Structure
-  Allocated Page Pointer: 8
-  Free Page Pointer: 8
+  Root Page Pointer: 4
+  Free Page Pointer: 4
   */
   //Header Setup
-  uint64 pos = fileManager->currentPosition();
+  memcpy(temporaryBuffer, &rootPageID, 4);
+  memcpy(temporaryBuffer + 4, &headFreePageID, 4);
   fileManager->seek(0, SET);
-  char *buffer = temporaryBuffer;
-  memcpy(buffer, &headAllocatedPageID, 8);
-  memcpy(buffer + 8, &headFreePageID, 8);
-  assert(fileManager->write(buffer, DISKMANAGER_HEADERSIZE) == DISKMANAGER_HEADERSIZE);
-  delete[] buffer;
-  //Set back to location where it was before
-  fileManager->seek(pos, SET);
+  assert(fileManager->write(temporaryBuffer, DISKMANAGER_HEADERSIZE) == DISKMANAGER_HEADERSIZE);
 }
 
-uint64 DiskManager::getHeadPageID() {
-  return headAllocatedPageID;
-}
-
-uint64 DiskManager::getHeadFreePageID() {
-  return headFreePageID;
+void DiskManager::readHeader() {
+  fileManager->seek(0, SET);
+  assert(fileManager->read(temporaryBuffer, DISKMANAGER_HEADERSIZE) == DISKMANAGER_HEADERSIZE);
+  memcpy(&rootPageID, temporaryBuffer, 4);
+  memcpy(&headFreePageID, temporaryBuffer + 4, 4);
 }
 
 void DiskManager::writePage(Page &page) {
   fileManager->seek(page.id, SET);
-  fileManager->write(page.buffer.get(), DISKMANAGER_PAGESIZE);
+  assert(fileManager->write(page.buffer.get(), DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
 }
 
 Page DiskManager::readPage(uint64 id) {
@@ -72,4 +64,12 @@ Page DiskManager::readPage(uint64 id) {
   assert(fileManager->read(buffer, DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
   Page page(buffer, id);
   return page;
+}
+
+void DiskManager::createRootPage() {
+  fileManager->seek(0, END);
+  for(int i = 0; i < DISKMANAGER_PAGESIZE; i++) {
+    temporaryBuffer[i] = PAGE_FILL;
+  }
+  fileManager->write(temporaryBuffer, DISKMANAGER_PAGESIZE);
 }

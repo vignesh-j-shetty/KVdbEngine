@@ -27,7 +27,7 @@ bool WindowsFileManager::exists() {
     return true;
 }
 
-void WindowsFileManager::seek(uint64 pos, SeekType type) {
+uint64 WindowsFileManager::seek(uint64 pos, SeekType type) {
     DWORD dwMoveMethod = FILE_BEGIN;
     switch (type) {
         case SET:
@@ -40,7 +40,7 @@ void WindowsFileManager::seek(uint64 pos, SeekType type) {
             dwMoveMethod = FILE_END;
             break;
     }
-    position = SetFilePointer(hFile, pos, NULL, dwMoveMethod);
+    return static_cast<uint32>(SetFilePointer(hFile, pos, NULL, dwMoveMethod));
 }
 
 uint32 WindowsFileManager::write(void *buffer, int count) {
@@ -55,13 +55,14 @@ uint32 WindowsFileManager::write(void *buffer, int count) {
 uint32 WindowsFileManager::read(void *buffer, int count) {
     DWORD dwBytesRead;
     if(!ReadFile(hFile, buffer, count, &dwBytesRead, NULL)) {
+        std::cout<<"Read failed :"<<GetLastError()<<std::endl;
         return 0;
     }
     return static_cast<uint32>(dwBytesRead);
 }
 
-uint64 WindowsFileManager::currentPosition() {
-    return position;
+uint64 WindowsFileManager::getCurrentPosition() {
+    return static_cast<uint32>(SetFilePointer(hFile, 0, NULL, FILE_CURRENT));
 }
 
 void WindowsFileManager::close() {

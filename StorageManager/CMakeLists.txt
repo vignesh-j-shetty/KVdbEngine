@@ -1,6 +1,6 @@
 add_library(DiskManager DiskManager.cpp ${HEADER_FILE})
 target_include_directories(DiskManager PRIVATE ${CMAKE_SOURCE_DIR}/FileSystemManager)
-
+add_library(PageSlotIterator PageSlotIterator.cpp)
 if(WIN32)
     target_link_libraries(DiskManager PRIVATE WindowsFileManager)
     add_definitions(-DWIN32)
