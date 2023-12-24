@@ -3,20 +3,18 @@
 #include<Iterator.h>
 #include<memory>
 #include "PageMemory.h"
-#define SLOT_SIZE 8
-class PageSlotIterator: public LinearIterator<PageSlot> {
+class PageSlotIterator: public LinearIterator<uint16> {
     public:
-    PageSlotIterator(std::shared_ptr<char[]> buffer);
+    PageSlotIterator(uint16 *slotArray, uint16 slotArrayCount);
     virtual bool hasNext() override;
-    virtual PageSlot getCurrentItem() override;
+    virtual uint16 getCurrentItem() override;
     virtual void next() override;
     virtual void prev() override;
-    virtual PageSlot getAt(unsigned int index) override;
-    virtual void setAt(unsigned int index, PageSlot item) override;
+    virtual uint16 getAt(unsigned int index) override;
+    virtual void setAt(unsigned int index, uint16 item) override;
     private:
-    std::shared_ptr<char[]> buffer;
-    uint32 size;
-    uint32 currentIndex;
-
+    uint16 *slotArray;
+    uint16 slotArrayCount;
+    uint16 currentIndex;
 };
 #endif

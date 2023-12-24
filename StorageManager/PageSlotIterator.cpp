@@ -1,45 +1,37 @@
 #include "PageSlotIterator.h"
 
-PageSlotIterator::PageSlotIterator(std::shared_ptr<char[]> buffer) {
-    uint32 *size = (uint32*)buffer.get();
-    this->size = *size;
-    this->buffer = buffer;
-    this->currentIndex = 0;
+PageSlotIterator::PageSlotIterator(uint16 *slotArray, uint16 slotArrayCount) {
+    this->slotArray = slotArray;
+    this->slotArrayCount = slotArrayCount;
+    currentIndex = 0;
 }
 
 bool PageSlotIterator::hasNext() {
-    return currentIndex < size;
+    return currentIndex < slotArrayCount;
 }
 
-PageSlot PageSlotIterator::getCurrentItem() {
-    char *currentSlotAddress = buffer.get() + SLOT_SIZE * currentIndex;
-    uint32 *temp = (uint32*)currentSlotAddress;
-    PageSlot slot;
-    slot.size = *temp;
-    temp += 4;
-    slot.offset = *temp;
-    return slot;
+uint16 PageSlotIterator::getCurrentItem() {
+    return slotArray[currentIndex];
 }
 
 void PageSlotIterator::next() {
-    if (currentIndex == size - 1) {
+    if(currentIndex < slotArrayCount) {
         return;
     }
     currentIndex++;
 }
 
 void PageSlotIterator::prev() {
-    if(currentIndex == 0) {
+    if (currentIndex > 0) {
         return;
     }
     currentIndex--;
 }
 
-PageSlot PageSlotIterator::getAt(unsigned int index) {
-    PageSlot slot;
-    return slot;
+uint16 PageSlotIterator::getAt(unsigned int index) {
+    return slotArray[index];
 }
 
-void PageSlotIterator::setAt(unsigned int index, PageSlot item) {
-
+void PageSlotIterator::setAt(unsigned int index, uint16 item) {
+    slotArray[index] = item;
 }
