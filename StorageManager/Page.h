@@ -8,6 +8,8 @@
 #define SLOT_SIZE 2
 #define PAGE_MEMORY_BLOCK_HEADER_SIZE 2
 #define PAGE_HEADER_SIZE 8
+#define PAGE_END(buffer) (buffer.get() + DISKMANAGER_PAGESIZE)
+
 enum PageType {
     BT_ROOT_PAGE = 0, BT_INTERNAL_NODE = 1, BT_LEAF_NODE = 2, OVERFLOW = 3
 };
@@ -44,7 +46,7 @@ class Page {
     char *allocateMemoryBlockAtSlot(uint16 size, uint16 index);
     // DeAllocates space of given slot index
     void dellocateMemoryBlock(uint16 index);
-
+    uint16 findBestFitFreeMemoryBlock(uint16 size);
     private:
     // This buffer will shared while copying.
     std::shared_ptr<char[]> buffer;
@@ -60,5 +62,6 @@ class Page {
     void mapPointers();
     // Create Memory Block With Required Header, does not update slot array
     char *getMemoryBlock(uint16 size);
+    
 };
 #endif
