@@ -15,8 +15,14 @@ void Page::mapPointers() {
 }
 
 char* Page::allocateMemoryBlock(uint16 size) {
+    // Adjust size for header
     size += PAGE_MEMORY_BLOCK_HEADER_SIZE;
-    char *memoryBlock = getMemoryBlock(size);
+    uint16 bestFitOffset = findBestFitFreeMemoryBlock(size);
+    char *memoryBlock = PAGE_END(buffer) - bestFitOffset;
+    if(bestFitOffset == 0) {
+        // No suitable free block found, attempt to get more memory
+        memoryBlock = getMemoryBlock(size);
+    }
     if(!memoryBlock) {
         return nullptr;
     }
@@ -26,8 +32,14 @@ char* Page::allocateMemoryBlock(uint16 size) {
 }
 
 char* Page::allocateMemoryBlockAtSlot(uint16 size, uint16 index) {
+    // Adjust size for header
     size += PAGE_MEMORY_BLOCK_HEADER_SIZE;
-    char *memoryBlock = getMemoryBlock(size);
+    uint16 bestFitOffset = findBestFitFreeMemoryBlock(size);
+    char *memoryBlock = PAGE_END(buffer) - bestFitOffset;
+    if(bestFitOffset == 0) {
+        // No suitable free block found, attempt to get more memory
+        memoryBlock = getMemoryBlock(size);
+    }
     if(!memoryBlock) {
         return nullptr;
     }
@@ -61,7 +73,7 @@ char *Page::getMemoryBlock(uint16 size) {
     return memoryBlock + PAGE_MEMORY_BLOCK_HEADER_SIZE;
 }
 
-void Page::dellocateMemoryBlock(uint16 index) {
+void Page::deallocateMemoryBlock(uint16 index) {
     if(index >= *slotCount) {
         return;
     }
@@ -90,6 +102,7 @@ uint16 Page::findBestFitFreeMemoryBlock(uint16 size) {
     // Finding best fit memory block offset
     while (currentOffset != 0) {
         char *memoryBlock = pageEnd - currentOffset;
+        // Access the size and next offset stored in the block header
         uint16 *currentSize = (uint16*) memoryBlock;
         uint16 *nextOffset = (uint16*) (memoryBlock + PAGE_MEMORY_BLOCK_HEADER_SIZE);
         uint16 currentSizeDifference = *currentSize - size;
@@ -101,7 +114,6 @@ uint16 Page::findBestFitFreeMemoryBlock(uint16 size) {
         previousOffset = currentOffset;
         currentOffset = *nextOffset;
     }
-    std::cout<<"Selected Offset :"<<selectedOffset;
     if(selectedOffset == 0) {
         return 0;
     }
@@ -117,4 +129,9 @@ uint16 Page::findBestFitFreeMemoryBlock(uint16 size) {
     }
     
     return selectedOffset;
+}
+
+char* Page::getMemory(uint16 offset) {
+    char *pageEnd = PAGE_END(buffer);
+    return pageEnd - offset + PAGE_MEMORY_BLOCK_HEADER_SIZE;
 }
