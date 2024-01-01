@@ -1,17 +1,7 @@
 #include "DiskManager.h"
 #include "Page.h"
-#include "BTNode.h"
 #include <string>
 #include<memory>
-BTKeyValuePair getKeyValuePair(std::string key, std::string value) {
-    BTKeyValuePair keyValuePair;
-    keyValuePair.keyType = STR;
-    keyValuePair.keySize = key.size() + 1;
-    keyValuePair.valueSize = value.size() + 1;
-    keyValuePair.key = key.data();
-    keyValuePair.value = value.data();
-    return keyValuePair;
-}
 
 int main() {
     //Testing
@@ -19,14 +9,14 @@ int main() {
     for(int i = 0; i < DISKMANAGER_PAGESIZE; i++) {
         buffer[i] = 0;
     }
-    //buffer[DISKMANAGER_PAGESIZE] = 'Z';
-    //buffer[DISKMANAGER_PAGESIZE + 1] = 'Z';
+    buffer[DISKMANAGER_PAGESIZE] = 'Z';
+    buffer[DISKMANAGER_PAGESIZE + 1] = 'Z';
+    std::string h1 = "abc";
+    std::string h2 = "xyzaa";
     Page page = Page(buffer, 2024);
-    // BTNode node(page);
-    // BTKeyValuePair pair1 = getKeyValuePair("def", "wsafsf");
-    // BTKeyValuePair pair2 = getKeyValuePair("abc", "wsafsf");
-    // node.insertKeyValue(pair1);
-    // node.insertKeyValue(pair2);
+    page.insertRecord(h1.data(), h1.size());
+    page.insertRecord(h2.data(), h2.size());
+    //page.insertRecord(h3.data(), h3.size());
     return 0;
 }
 

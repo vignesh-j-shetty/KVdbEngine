@@ -2,7 +2,7 @@
 #define DISKMANAGER
 #include "StorageManagerCommon.h"
 #include "Page.h"
-
+#include <memory>
 class FileManager;
 
 class DiskManager {
@@ -14,7 +14,7 @@ class DiskManager {
     // Writes Page to DB file
     void writePage(Page &page);
     // returns Page with given Page ID
-    Page readPage(uint64 id);
+    std::shared_ptr<Page> readPage(uint64 id);
     
     private:
     FileManager *fileManager;

@@ -3,7 +3,7 @@
 #include "UnixFileManager.h"
 #include "WindowsFileManager.h"
 #include "DiskManager.h"
-#include<cassert>
+#include <cassert>
 
 DiskManager::DiskManager(const char *fileName) {
   #ifdef WIN32
@@ -53,16 +53,16 @@ void DiskManager::readHeader() {
 
 void DiskManager::writePage(Page &page) {
   fileManager->seek(page.id, SET);
-  assert(fileManager->write(page.buffer.get(), DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
+  assert(fileManager->write(page.buffer, DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
 }
 
-Page DiskManager::readPage(uint64 id) {
+std::shared_ptr<Page> DiskManager::readPage(uint64 id) {
   //Check if id is valid
   assert((id-16)%2024 == 0);
   fileManager->seek(id, SET);
   char *buffer = new char[DISKMANAGER_PAGESIZE];
   assert(fileManager->read(buffer, DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
-  Page page(buffer, id);
+  std::shared_ptr<Page> page(new Page(buffer, id));
   return page;
 }
 
