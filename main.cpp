@@ -16,7 +16,7 @@ int main() {
     std::shared_ptr<Page> page(new Page(buffer, 2024));
     BTNode node(page);
     std::shared_ptr<Key> key(new StringKey("AAaa"));
-    std::shared_ptr<Value> value(new StringValue("Hello"));
+    std::shared_ptr<Value> value(new StringValue("ABCDEF"));
     node.insert(key, value);
     key->setData(std::string("zzzz"));
     node.insert(key, value);

@@ -2,10 +2,11 @@
 #include<iostream>
 #include <cassert>
 #include<string.h>
-#include "KeyValueFactory.h"
+
 BTNode::BTNode(std::shared_ptr<Page> page) {
     this->page = page;
-    this->temporaryRecordBuffer = new char[RECORD_MAX_SIZE];
+    temporaryRecordBuffer = new char[RECORD_MAX_SIZE];
+    kvFactory = KeyValueFactory(temporaryRecordBuffer);
 }
 
 void BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
@@ -18,7 +19,7 @@ void BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
     }
     for(uint8 i = 0; i < count; i++) {
         page->readRecord(temporaryRecordBuffer, page->getRecordSize(i), i);
-        std::shared_ptr<Key> _key = KeyValueFactory::getKeyFromSerilizedData(temporaryRecordBuffer);
+        std::shared_ptr<Key> _key = kvFactory.getKey();
         if(key->compare(_key)) {
             uint16 totalSize = serializeToTemporaryBuffer(key, value);
             page->insertRecord(temporaryRecordBuffer, totalSize, i);
@@ -34,15 +35,19 @@ void BTNode::printKeys() {
     uint8 count = page->getRecordCount();
     for (uint8 i = 0; i < count; i++) {
         page->readRecord(temporaryRecordBuffer, page->getRecordSize(i), i);
-        std::shared_ptr<Key> _key = KeyValueFactory::getKeyFromSerilizedData(temporaryRecordBuffer);
-        std::cout<<std::any_cast<std::string>(_key->getData())<<std::endl;
+        std::shared_ptr<Key> _key = kvFactory.getKey();
+        std::shared_ptr<Value> value = kvFactory.getValue();
+        std::cout<<"Key :"<<std::any_cast<std::string>(_key->getData())<<std::endl;
+        std::cout<<"Value :"<<std::any_cast<std::string>(value->getValue())<<std::endl;
     }
 }
 
 uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
     uint8 keySize = key->size();
     uint8 keyType = key->getKeyType();
-    uint16 totalSize = keySize + value->size() + 2;
+    uint8 valueType = value->getType();
+    uint8 valueSize = value->size();
+    uint16 totalSize = keySize + valueSize + 4;
     char *p = temporaryRecordBuffer;
     memcpy(p, &keyType, sizeof(keyType));
     p += sizeof(keyType);
@@ -50,6 +55,10 @@ uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_
     p += sizeof(keySize);
     key->serialize(p);
     p += keySize;
+    memcpy(p, &valueType, sizeof(valueType));
+    p += sizeof(valueType);
+    memcpy(p, &valueSize, sizeof(valueSize));
+    p += sizeof(valueSize);
     value->serialize(p);
     return totalSize;
 }

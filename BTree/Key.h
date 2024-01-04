@@ -5,7 +5,6 @@
 enum KeyType {
     STRING = 0, INTEGER = 1
 };
-
 class Key {
     public:
     virtual void setData(Any any) = 0;

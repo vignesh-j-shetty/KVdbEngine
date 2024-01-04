@@ -9,6 +9,7 @@ class StringValue: public Value {
     virtual void setValue(Any value) override;
     virtual uint8 size() override;
     virtual void serialize(void *data) override;
+    virtual ValueType getType() override;
     private:
     std::string s;
 };

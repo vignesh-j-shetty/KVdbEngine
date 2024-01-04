@@ -21,3 +21,7 @@ uint8 StringValue::size() {
 void StringValue::serialize(void *data) {
     memcpy(data, s.data(), s.size());
 }
+
+ValueType StringValue::getType() {
+    return STRING_V;
+}
