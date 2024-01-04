@@ -7,6 +7,7 @@ include_directories(${CMAKE_SOURCE_DIR}/CommonHeaders)
 add_subdirectory(${CMAKE_SOURCE_DIR}/FileSystemManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/StorageManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/BTree)
+add_subdirectory(Test)
 
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/BTree)
