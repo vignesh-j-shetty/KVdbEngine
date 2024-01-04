@@ -4,7 +4,6 @@
 #include<memory>
 #include "StorageManagerCommon.h"
 #include "TypeDefs.h"
-#include "PageSlotIterator.h"
 #define SLOT_SIZE 2
 #define PAGE_RECORD_HEADER_SIZE 2
 #define PAGE_FREE_RECORD_HEADER_SIZE 4
@@ -37,12 +36,19 @@ class Page {
     ~Page() {
         delete[] buffer;
     }
+    // Gets number of record
+    uint8 getRecordCount();
+    //Gets Record size
+    uint16 getRecordSize(uint8 index);
     // Inserts Record data into the page, creating a new slot and managing free space.
     void insertRecord(char *data, uint16 dataLength, uint8 atIndex);
     // Adds record at end of slot list
     void insertRecord(char *data, uint16 dataLength);
+    // Reads record for given number of bytes in dataLength into data
+    void readRecord(char *data, uint16 dataLength, uint8 atIndex);
+    // Removes record at given slot Index
+    void removeRecord(uint8 atIndex);
     private:
-
     char *buffer = nullptr;
     uint64 id;
     //Headers

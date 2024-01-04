@@ -1,0 +1,6 @@
+add_library(BTNode BTNode.cpp)
+add_library(StringKey StringKey.cpp)
+add_library(StringValue StringValue.cpp)
+target_include_directories(BTNode PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
+target_link_libraries(BTNode PUBLIC StringKey)
+target_link_libraries(BTNode PUBLIC StringValue)

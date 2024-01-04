@@ -55,10 +55,21 @@ void Page::allocateSpace(uint16 size, uint8 atIndex) {
     slotList[atIndex] = *(header.freeSpaceOffset);
 }
 
-char* Page::getRecordPointer(uint8 index) {
+inline char* Page::getRecordPointer(uint8 index) {
     assert(index < *(header.slotCount));
     uint16 offset = header.slotList[index];
     return PAGE_END - offset + PAGE_RECORD_HEADER_SIZE;
+}
+
+uint16 Page::getRecordSize(uint8 index) {
+    assert(index < *(header.slotCount));
+    uint16 offset = header.slotList[index];
+    uint16* size = (uint16*) (PAGE_END - offset);
+    return *size - 2;
+}
+
+uint8 Page::getRecordCount() {
+    return *(header.slotCount);
 }
 
 void Page::insertRecord(char *data, uint16 dataLength, uint8 atIndex) {
@@ -75,4 +86,23 @@ void Page::insertRecord(char *data, uint16 dataLength, uint8 atIndex) {
 void Page::insertRecord(char *data, uint16 dataLength) {
     uint8 currentIndex = *(header.slotCount);
     insertRecord(data, dataLength, currentIndex);
+}
+
+void Page::readRecord(char *data, uint16 dataLength, uint8 atIndex) {
+    assert(atIndex < *(header.slotCount));
+    memcpy(data, getRecordPointer(atIndex), dataLength);
+}
+
+void Page::removeRecord(uint8 atIndex) {
+    assert(atIndex < *(header.slotCount));
+    uint16 removeOffset = header.slotList[atIndex];
+    uint16* nextPointer = (uint16*) getRecordPointer(atIndex);
+    *nextPointer = *(header.freeBlockList);
+    *(header.freeBlockList) = removeOffset;
+    //Updating Slot Array
+    uint8 count = *(header.slotCount) - 1;
+    for (uint8 i = atIndex; i < count; i++) {
+        slotArray[i] = slotArray[i + 1];
+    }
+    *(header.slotCount) -= 1;
 }

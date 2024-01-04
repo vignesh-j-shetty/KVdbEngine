@@ -1,7 +1,10 @@
-#include "DiskManager.h"
 #include "Page.h"
+#include "BTNode.h"
+#include "StringKey.h"
+#include "StringValue.h"
 #include <string>
 #include<memory>
+#include<iostream>
 
 int main() {
     //Testing
@@ -9,14 +12,17 @@ int main() {
     for(int i = 0; i < DISKMANAGER_PAGESIZE; i++) {
         buffer[i] = 0;
     }
-    buffer[DISKMANAGER_PAGESIZE] = 'Z';
-    buffer[DISKMANAGER_PAGESIZE + 1] = 'Z';
-    std::string h1 = "abc";
-    std::string h2 = "xyzaa";
-    Page page = Page(buffer, 2024);
-    page.insertRecord(h1.data(), h1.size());
-    page.insertRecord(h2.data(), h2.size());
-    //page.insertRecord(h3.data(), h3.size());
+    std::string valueString = "sncknck";
+    std::shared_ptr<Page> page(new Page(buffer, 2024));
+    BTNode node(page);
+    std::shared_ptr<Key> key(new StringKey("AAaa"));
+    std::shared_ptr<Value> value(new StringValue("Hello"));
+    node.insert(key, value);
+    key->setData(std::string("zzzz"));
+    node.insert(key, value);
+    key->setData(std::string("Aaaa"));
+    node.insert(key, value);
+    node.printKeys();
     return 0;
 }
 
