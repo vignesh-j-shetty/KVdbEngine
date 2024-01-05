@@ -13,5 +13,10 @@ add_executable(PageTest PageTest.cpp)
 target_link_libraries(PageTest GTest::gtest_main Page)
 target_include_directories(PageTest PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 
+add_executable(BTNodeTest BTNodeTest.cpp)
+target_link_libraries(BTNodeTest GTest::gtest_main BTNode)
+target_include_directories(BTNodeTest PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
+target_include_directories(BTNodeTest PRIVATE ${CMAKE_SOURCE_DIR}/BTree)
+
 include(GoogleTest)
 gtest_discover_tests(PageTest)

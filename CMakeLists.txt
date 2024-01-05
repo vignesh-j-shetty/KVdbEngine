@@ -12,5 +12,4 @@ add_subdirectory(Test)
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/BTree)
 
-target_link_libraries(main DiskManager)
 target_link_libraries(main BTNode)

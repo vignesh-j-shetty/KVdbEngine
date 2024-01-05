@@ -4,8 +4,8 @@
 #include "Page.h"
 #include "Key.h"
 #include "Value.h"
-#include <memory>
 #include "KeyValueFactory.h"
+#include <memory>
 #define RECORD_MAX_SIZE 512
 class BTNode {
     public:
@@ -14,17 +14,24 @@ class BTNode {
         temporaryRecordBuffer = new char[RECORD_MAX_SIZE];
         page = node.page;
     }
+    BTNode() {
+
+    }
     ~BTNode() {
-        delete temporaryRecordBuffer;
+        if(!temporaryRecordBuffer) {
+            delete temporaryRecordBuffer;
+        }
     }
     void insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
+    std::shared_ptr<Key> getKey(uint8 index);
+    std::shared_ptr<Value> getValue(uint8 index);
     uint8 getItemCount();
-    void printKeys();
-    uint16 serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     private:
     std::shared_ptr<Page> page;
     char *temporaryRecordBuffer = nullptr;
     KeyValueFactory kvFactory;
+
+    uint16 serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
 };
 
 #endif

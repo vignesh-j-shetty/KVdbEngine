@@ -30,16 +30,23 @@ void BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
     page->insertRecord(temporaryRecordBuffer, totalSize, count);
 }
 
-//Temporary function later to be removed
-void BTNode::printKeys() {
-    uint8 count = page->getRecordCount();
-    for (uint8 i = 0; i < count; i++) {
-        page->readRecord(temporaryRecordBuffer, page->getRecordSize(i), i);
-        std::shared_ptr<Key> _key = kvFactory.getKey();
-        std::shared_ptr<Value> value = kvFactory.getValue();
-        std::cout<<"Key :"<<std::any_cast<std::string>(_key->getData())<<std::endl;
-        std::cout<<"Value :"<<std::any_cast<std::string>(value->getValue())<<std::endl;
-    }
+
+std::shared_ptr<Key> BTNode::getKey(uint8 index) {
+    assert(index <= page->getRecordCount());
+    page->readRecord(temporaryRecordBuffer, page->getRecordSize(index), index);
+    std::shared_ptr<Key> key = kvFactory.getKey();
+    return key;
+}
+
+std::shared_ptr<Value> BTNode::getValue(uint8 index) {
+    assert(index <= page->getRecordCount());
+    page->readRecord(temporaryRecordBuffer, page->getRecordSize(index), index);
+    std::shared_ptr<Value> value = kvFactory.getValue();
+    return value;
+}
+
+uint8 BTNode::getItemCount() {
+    return page->getRecordCount();
 }
 
 uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
