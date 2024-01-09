@@ -36,6 +36,9 @@ class Page {
     ~Page() {
         delete[] buffer;
     }
+    inline uint64 getID() {
+        return id;
+    }
     // Gets number of record
     uint8 getRecordCount();
     //Gets Record size
