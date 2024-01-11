@@ -96,9 +96,13 @@ void Page::readRecord(char *data, uint16 dataLength, uint8 atIndex) {
 void Page::removeRecord(uint8 atIndex) {
     assert(atIndex < *(header.slotCount));
     uint16 removeOffset = header.slotList[atIndex];
-    uint16* nextPointer = (uint16*) getRecordPointer(atIndex);
-    *nextPointer = *(header.freeBlockList);
-    *(header.freeBlockList) = removeOffset;
+    if(removeOffset == *(header.freeSpaceOffset)) {
+        *(header.freeSpaceOffset) = removeOffset - getRecordSize(atIndex) - 2;
+    } else {
+        uint16* nextPointer = (uint16*) getRecordPointer(atIndex);
+        *nextPointer = *(header.freeBlockList);
+        *(header.freeBlockList) = removeOffset;
+    }
     //Updating Slot Array
     uint8 count = *(header.slotCount) - 1;
     for (uint8 i = atIndex; i < count; i++) {

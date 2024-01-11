@@ -1,8 +1,7 @@
 #include "Page.h"
-// #include "BTNode.h"
-// #include "StringKey.h"
-// #include "StringValue.h"
-#include "DiskManager.h"
+#include "BTNode.h"
+#include "StringKey.h"
+#include "StringValue.h"
 #include <string>
 #include<memory>
 #include<iostream>
@@ -15,11 +14,19 @@
 //         std::cout<<"Value :"<<value<<std::endl;
 //     }
 // }
+// 16 41 66
+
 
 int main() {
     //Testing
-    DiskManager diskmanager = DiskManager("hello.db");
-    diskmanager.deletePage(41);
+    char *buffer = new char[DISKMANAGER_PAGESIZE];
+    for(int i = 0; i < DISKMANAGER_PAGESIZE; i++) {
+        buffer[i] = 0;
+    }
+    std::shared_ptr<Page> page(new Page(buffer, 0));
+    char *c = "0123";
+    page->insertRecord(c, 4);
+    page->removeRecord(0);
     return 0;
 }
 

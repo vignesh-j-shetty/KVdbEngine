@@ -91,6 +91,7 @@ void DiskManager::deletePage(uint64 id) {
   }
   uint64 currentPageID = header.freeHeadPageID;
   uint64 previousPageID = 0;
+  bool isInserted = false;
   while (currentPageID != 0) {
     if(currentPageID > id) {
       setFreePageNextPageID(id, currentPageID);
@@ -100,9 +101,17 @@ void DiskManager::deletePage(uint64 id) {
       } else {
         setFreePageNextPageID(previousPageID, id);
       }
+      isInserted = true;
+    } else if(currentPageID == id) {
+      throw;
     }
     previousPageID = currentPageID;
     currentPageID = getFreePageNextPageID(currentPageID);
+  }
+  // If not inserted append to end of list
+  if(!isInserted) {
+    setFreePageNextPageID(previousPageID, id);
+    setFreePageNextPageID(id, 0);
   }
 }
 
