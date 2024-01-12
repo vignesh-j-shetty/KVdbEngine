@@ -5,7 +5,7 @@
 #include <string>
 #include<memory>
 #include<iostream>
-
+#include <chrono>
 // void print(BTNode &node) {
 //     for(uint8 i = 0; i < node.getItemCount(); i++) {
 //         std::string key = std::any_cast<std::string>(node.getKey(i)->getData());
@@ -14,19 +14,15 @@
 //         std::cout<<"Value :"<<value<<std::endl;
 //     }
 // }
-// 16 41 66
 
 
 int main() {
     //Testing
     char *buffer = new char[DISKMANAGER_PAGESIZE];
-    for(int i = 0; i < DISKMANAGER_PAGESIZE; i++) {
-        buffer[i] = 0;
-    }
+    memset(buffer, 0, DISKMANAGER_PAGESIZE);
     std::shared_ptr<Page> page(new Page(buffer, 0));
-    char *c = "0123";
-    page->insertRecord(c, 4);
-    page->removeRecord(0);
+    std::string s = "key";
+    page->insertRecord(s.data(), 3);
     return 0;
 }
 

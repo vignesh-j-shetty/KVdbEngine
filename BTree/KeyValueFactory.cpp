@@ -19,6 +19,7 @@ std::shared_ptr<Key> KeyValueFactory::getKey() {
         }
         default:
         assert(false && "Not yet support in Factory");
+        return std::shared_ptr<StringKey>(new StringKey(std::string("")));
     }
 }
 
@@ -36,5 +37,6 @@ std::shared_ptr<Value> KeyValueFactory::getValue() {
         }
         default:
         assert(false && "Not yet support in Factory");
+        return std::shared_ptr<Value>(new StringValue(std::string("")));
     }
 }

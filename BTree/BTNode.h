@@ -23,9 +23,10 @@ class BTNode {
         }
     }
     void insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
-    std::shared_ptr<Key> getKey(uint8 index);
-    std::shared_ptr<Value> getValue(uint8 index);
-    uint8 getItemCount();
+    void remove(uint16 index);
+    std::shared_ptr<Key> getKey(uint16 index);
+    std::shared_ptr<Value> getValue(uint16 index);
+    uint16 getItemCount();
     private:
     std::shared_ptr<Page> page;
     char *temporaryRecordBuffer = nullptr;
