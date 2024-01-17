@@ -1,0 +1,2 @@
+add_library(MinLinkedListCache MinLinkedListCache.cpp)
+target_include_directories(MinLinkedListCache PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)

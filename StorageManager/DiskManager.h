@@ -7,7 +7,11 @@ class FileManager;
 
 class DiskManager {
     public:
+    DiskManager() {
+        
+    }
     DiskManager(const char *fileName);
+    DiskManager(DiskManager &diskManager);
     ~DiskManager() throw();
     // Returns First page in linked list of used pages
     uint64 getHeadPageID();
@@ -22,7 +26,7 @@ class DiskManager {
         uint64 rootPageID;
         uint64 freeHeadPageID;
     };
-    FileManager *fileManager;
+    std::shared_ptr<FileManager> fileManager;
     //ID is on disk base address of page
     char *temporaryBuffer;
     void fillPageNULL(char *buffer);

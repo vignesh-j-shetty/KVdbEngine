@@ -15,14 +15,12 @@
 //     }
 // }
 
-
+//auto start = std::chrono::high_resolution_clock::now();
+// auto end = std::chrono::high_resolution_clock::now();
+// std::chrono::duration<double, std::milli> ms_double = end - start;
+// std::cout << "Execution time: " << ms_double.count() << " milliseconds\n";
 int main() {
     //Testing
-    char *buffer = new char[DISKMANAGER_PAGESIZE];
-    memset(buffer, 0, DISKMANAGER_PAGESIZE);
-    std::shared_ptr<Page> page(new Page(buffer, 0));
-    std::string s = "key";
-    page->insertRecord(s.data(), 3);
-    return 0;
+    
 }
 

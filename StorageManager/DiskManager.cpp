@@ -7,9 +7,9 @@
 
 DiskManager::DiskManager(const char *fileName) {
   #ifdef WIN32
-  fileManager = new WindowsFileManager(fileName);
+  fileManager = std::shared_ptr<WindowsFileManager>(new WindowsFileManager(fileName));
   #else
-  fileManager = new UnixFileManager(fileName);
+  fileManager = std::shared_ptr<UnixFileManager>(new UnixFileManager(fileName));
   #endif
   temporaryBuffer = new char[DISKMANAGER_PAGESIZE];
   if(fileManager->exists() == false) {
@@ -24,8 +24,12 @@ DiskManager::DiskManager(const char *fileName) {
   }
 }
 
+DiskManager::DiskManager(DiskManager &diskManager) {
+  temporaryBuffer = new char[DISKMANAGER_PAGESIZE];
+  fileManager = diskManager.fileManager;
+}
+
 DiskManager::~DiskManager() throw() {
-  delete fileManager;
   delete[] temporaryBuffer;
 }
 
