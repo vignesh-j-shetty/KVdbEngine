@@ -78,6 +78,7 @@ void Page::insertRecord(char *data, uint16 dataLength, uint16 atIndex) {
         allocateSpace(dataLength, atIndex);
         char* record = getRecordPointer(atIndex);
         memcpy(record, data, dataLength);
+        _isDirty = true;
     } catch(...) {
         std::cout<<"Error while allocating error";
     }
@@ -109,4 +110,5 @@ void Page::removeRecord(uint16 atIndex) {
         slotArray[i] = slotArray[i + 1];
     }
     *(header.slotCount) -= 1;
+    _isDirty = true;
 }

@@ -50,9 +50,9 @@ void DiskManager::read(Header &header) {
   header.freeHeadPageID = temp;
 }
 
-void DiskManager::writePage(Page &page) {
-  fileManager->seek(page.id, SET);
-  assert(fileManager->write(page.buffer, DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
+void DiskManager::writePage(std::shared_ptr<Page> page) {
+  fileManager->seek(page->id, SET);
+  assert(fileManager->write(page->buffer, DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
 }
 
 std::shared_ptr<Page> DiskManager::readPage(uint64 id) {

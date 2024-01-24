@@ -55,10 +55,10 @@ uint16 BTNode::getItemCount() {
 }
 
 uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
-    uint16 keySize = key->size();
-    uint16 keyType = key->getKeyType();
-    uint16 valueType = value->getType();
-    uint16 valueSize = value->size();
+    uint8 keySize = key->size();
+    uint8 keyType = key->getKeyType();
+    uint8 valueType = value->getType();
+    uint8 valueSize = value->size();
     uint16 totalSize = keySize + valueSize + 4;
     char *p = temporaryRecordBuffer;
     memcpy(p, &keyType, sizeof(keyType));

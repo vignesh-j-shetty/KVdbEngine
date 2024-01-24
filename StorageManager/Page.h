@@ -39,6 +39,9 @@ class Page {
     inline uint64 getID() {
         return id;
     }
+    inline bool isDirty() {
+        return _isDirty;
+    }
     // Gets number of record
     uint16 getRecordCount();
     //Gets Record size
@@ -69,5 +72,6 @@ class Page {
     void mapPointers();
     void allocateSpace(uint16 size, uint16 atIndex);
     char *getRecordPointer(uint16 index);
+    bool _isDirty = false;
 };
 #endif

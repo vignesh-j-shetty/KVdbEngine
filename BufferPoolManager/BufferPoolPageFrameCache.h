@@ -5,13 +5,23 @@
 class BufferPoolPageFrameCache {
     public:
     virtual void addPageFrame(BufferPoolFrame frame) = 0;
-    virtual void removePageFrame(uint64 pageID) = 0;
-    virtual uint8 getMaxSize() = 0;
-    virtual uint8 getSize() = 0;
-    virtual BufferPoolFrame getCurrentElement() = 0;
-    virtual bool hasNext() = 0;
-    virtual void next() = 0;
+    virtual BufferPoolFrame removePageFrame() = 0;
+    virtual BufferPoolFrame getFrame(uint64 id) = 0;
 };
 
+class BufferPoolPageFrameCacheException {
+    public:
+    static const uint8 PAGE_NOT_IN_CACHE = 1;
+    static const uint8 CACHE_MEMORY_FULL = 2;
+    static const uint8 INVALID_OPERATION = 3;
+    BufferPoolPageFrameCacheException(uint8 type) {
+        exceptionType = type;
+    }
+    uint8 getExceptionType() {
+        return exceptionType;
+    }
+    private:
+    uint8 exceptionType;
+};
 
 #endif

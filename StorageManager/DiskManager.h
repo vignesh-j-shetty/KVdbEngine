@@ -16,7 +16,7 @@ class DiskManager {
     // Returns First page in linked list of used pages
     uint64 getHeadPageID();
     // Writes Page to DB file
-    void writePage(Page &page);
+    void writePage(std::shared_ptr<Page> page);
     // returns Page with given Page ID
     std::shared_ptr<Page> readPage(uint64 id);
     std::shared_ptr<Page> createPage();

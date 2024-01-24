@@ -6,6 +6,7 @@
 #include<memory>
 #include<iostream>
 #include <chrono>
+
 // void print(BTNode &node) {
 //     for(uint8 i = 0; i < node.getItemCount(); i++) {
 //         std::string key = std::any_cast<std::string>(node.getKey(i)->getData());
@@ -21,6 +22,5 @@
 // std::cout << "Execution time: " << ms_double.count() << " milliseconds\n";
 int main() {
     //Testing
-    
 }
 
