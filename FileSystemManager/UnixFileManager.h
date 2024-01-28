@@ -19,6 +19,5 @@ class UnixFileManager: public FileManager {
     private:
     int fd;
     char *cfileName;
-    uint64 position;
 };
 #endif

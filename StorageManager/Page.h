@@ -11,7 +11,7 @@
 #define PAGE_END (buffer + DISKMANAGER_PAGESIZE)
 
 enum PageType {
-    BT_ROOT_PAGE = 0, BT_INTERNAL_PAGE = 1, BT_LEAF_PAGE = 2, OVERFLOW = 3
+    BT_ROOT_PAGE = 0, BT_INTERNAL_PAGE = 1, BT_LEAF_PAGE = 2, _OVERFLOW = 3
 };
 
 class DiskManager;
@@ -71,6 +71,7 @@ class Page {
     //Functions
     void mapPointers();
     void allocateSpace(uint16 size, uint16 atIndex);
+    void addBlockToFreeList(uint16 atIndex);
     char *getRecordPointer(uint16 index);
     bool _isDirty = false;
 };

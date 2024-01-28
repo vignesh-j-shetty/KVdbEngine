@@ -95,6 +95,17 @@ void Page::readRecord(char *data, uint16 dataLength, uint16 atIndex) {
 }
 
 void Page::removeRecord(uint16 atIndex) {
+    addBlockToFreeList(atIndex);
+    //Updating Slot Array
+    uint16 count = *(header.slotCount) - 1;
+    for (uint16 i = atIndex; i < count; i++) {
+        slotArray[i] = slotArray[i + 1];
+    }
+    *(header.slotCount) -= 1;
+    _isDirty = true;
+}
+
+void Page::addBlockToFreeList(uint16 atIndex) {
     assert(atIndex < *(header.slotCount));
     uint16 removeOffset = header.slotList[atIndex];
     if(removeOffset == *(header.freeSpaceOffset)) {
@@ -104,11 +115,4 @@ void Page::removeRecord(uint16 atIndex) {
         *nextPointer = *(header.freeBlockList);
         *(header.freeBlockList) = removeOffset;
     }
-    //Updating Slot Array
-    uint16 count = *(header.slotCount) - 1;
-    for (uint16 i = atIndex; i < count; i++) {
-        slotArray[i] = slotArray[i + 1];
-    }
-    *(header.slotCount) -= 1;
-    _isDirty = true;
 }

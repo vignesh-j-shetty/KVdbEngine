@@ -1,6 +1,2 @@
-add_library(MinHeapFrameCache MinHeapFrameCache.cpp)
-target_include_directories(MinHeapFrameCache PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
-
 add_library(BufferPoolManager BufferPoolManager.cpp)
 target_include_directories(BufferPoolManager PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
-target_link_libraries(BufferPoolManager PRIVATE MinHeapFrameCache)

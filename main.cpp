@@ -22,5 +22,6 @@
 // std::cout << "Execution time: " << ms_double.count() << " milliseconds\n";
 int main() {
     //Testing
+    return 0;
 }
 

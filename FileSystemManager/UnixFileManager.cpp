@@ -28,7 +28,6 @@ UnixFileManager::UnixFileManager(std::string fileName) {
     cfileName = new char[len];
     strcpy(cfileName,fileName.c_str());
     fd = -1;
-    position = 0;
 }
 
 UnixFileManager::~UnixFileManager() {
@@ -54,6 +53,7 @@ bool UnixFileManager::exists() {
 }
 
 uint64 UnixFileManager::seek(uint64 pos, SeekType type) {
+    uint64 position;
     switch (type) {
         case SET:
         position = lseek(fd,pos,SEEK_SET);
@@ -79,7 +79,7 @@ uint32 UnixFileManager::read(void *buffer, int count) {
 }
 
 uint64 UnixFileManager::getCurrentPosition() {
-    return position;
+    return lseek(fd, 0, SEEK_CUR);
 }
 
 void UnixFileManager::close() {

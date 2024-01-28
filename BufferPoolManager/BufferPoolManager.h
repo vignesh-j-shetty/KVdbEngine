@@ -1,23 +1,27 @@
 #ifndef BUFFERPOOLMANAGER
 #define BUFFERPOOLMANAGER
+#define BUFFER_POOL_SIZE 10
 #include "Page.h"
 #include <memory>
 #include <exception>
 #include "DiskManager.h"
-#include "BufferPoolFrame.h"
-#include "BufferPoolPageFrameCache.h"
-#include "MinHeapFrameCache.h"
+#include <vector>
 class BufferPoolManager {
     public:
     BufferPoolManager(DiskManager diskManager) {
-        this->diskManager = diskManager;
+        diskManager = diskManager;
+        clockHand = 0;
+        frameList.reserve(BUFFER_POOL_SIZE);
     }
-
     std::shared_ptr<Page> getPage(uint64 id);
     std::shared_ptr<Page> newPage();
-    void pinPage(uint64 id);
-    void unPinPage(uint64 id);
     private:
     DiskManager diskManager;
+    struct PageFrame {
+        std::shared_ptr<Page> pageCache;
+        bool accessBit;
+    };
+    std::vector<PageFrame> frameList;
+    uint16 clockHand;
 };
 #endif

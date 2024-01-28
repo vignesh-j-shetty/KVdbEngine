@@ -1,7 +1,9 @@
 #include "DiskManager.h"
 #include "FileManager.h"
 #include "UnixFileManager.h"
+#ifdef WIN32
 #include "WindowsFileManager.h"
+#endif
 #include "DiskManager.h"
 #include <cassert>
 
