@@ -35,3 +35,7 @@ std::shared_ptr<Page> BufferPoolManager::getPage(uint64 id) {
 std::shared_ptr<Page> BufferPoolManager::newPage() {
     return diskManager.createPage();
 }
+
+std::shared_ptr<Page> BufferPoolManager::getRootPage() {
+    return getPage(HEADER_SIZE);
+}

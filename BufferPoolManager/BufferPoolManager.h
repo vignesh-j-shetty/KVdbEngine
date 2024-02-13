@@ -8,6 +8,9 @@
 #include <vector>
 class BufferPoolManager {
     public:
+    BufferPoolManager() {
+        
+    }
     BufferPoolManager(DiskManager diskManager) {
         diskManager = diskManager;
         clockHand = 0;
@@ -15,6 +18,7 @@ class BufferPoolManager {
     }
     std::shared_ptr<Page> getPage(uint64 id);
     std::shared_ptr<Page> newPage();
+    std::shared_ptr<Page> getRootPage();
     private:
     DiskManager diskManager;
     struct PageFrame {

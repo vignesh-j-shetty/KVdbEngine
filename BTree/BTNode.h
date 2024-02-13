@@ -7,6 +7,7 @@
 #include "KeyValueFactory.h"
 #include <memory>
 #define RECORD_MAX_SIZE 512
+#define INTERNAL_NODE_MAX_ELEMENTS 80
 class BTNode {
     public:
     BTNode(std::shared_ptr<Page> page);
@@ -31,7 +32,6 @@ class BTNode {
     std::shared_ptr<Page> page;
     char *temporaryRecordBuffer = nullptr;
     KeyValueFactory kvFactory;
-
     uint16 serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
 };
 

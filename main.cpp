@@ -2,6 +2,7 @@
 #include "BTNode.h"
 #include "StringKey.h"
 #include "StringValue.h"
+#include "DiskManager.h"
 #include <string>
 #include<memory>
 #include<iostream>
@@ -21,7 +22,16 @@
 // std::chrono::duration<double, std::milli> ms_double = end - start;
 // std::cout << "Execution time: " << ms_double.count() << " milliseconds\n";
 int main() {
-    //Testing
+    DiskManager diskmanger("test.db");
+    std::shared_ptr<Page> page = diskmanger.createPage();
+    BTNode node(page);
+    std::shared_ptr<Key> key(new StringKey("Hevhvhfhfghfhfe"));
+    std::shared_ptr<Value> value(new StringValue("he"));
+    try {
+        node.insert(key, value);
+    } catch (NoSpaceException e) {
+        std::cout<<"Hellow"<<std::endl;
+    }
     return 0;
 }
 

@@ -1,5 +1,6 @@
 #ifndef DISKMANAGER
 #define DISKMANAGER
+#define HEADER_SIZE 16
 #include "StorageManagerCommon.h"
 #include "Page.h"
 #include <memory>

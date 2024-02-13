@@ -1,6 +1,8 @@
 #include "Page.h"
 #include<iostream>
 #include <cassert>
+#include "NoSpaceException.h"
+
 Page::Page(Page &page) {
     buffer = page.buffer;
     id = page.id;
@@ -38,7 +40,7 @@ void Page::allocateSpace(uint16 size, uint16 atIndex) {
         char *nextSlotEndPosition  = (char *)(slotArray  + slotCount + 1);
         if(nextSlotEndPosition > adjustedSpace) {
             std::cout<<"No Available free Space";
-            return throw;
+            return throw NoSpaceException();
         }
     }
     *(header.freeSpaceOffset) = adjustedOffset;
@@ -76,12 +78,14 @@ void Page::insertRecord(char *data, uint16 dataLength, uint16 atIndex) {
     try {
         //Allocate space at end
         allocateSpace(dataLength, atIndex);
-        char* record = getRecordPointer(atIndex);
-        memcpy(record, data, dataLength);
-        _isDirty = true;
-    } catch(...) {
-        std::cout<<"Error while allocating error";
+        
+    } catch(NoSpaceException error) {
+        throw error;
     }
+    char* record = getRecordPointer(atIndex);
+    memcpy(record, data, dataLength);
+    _isDirty = true;
+
 }
 
 void Page::insertRecord(char *data, uint16 dataLength) {

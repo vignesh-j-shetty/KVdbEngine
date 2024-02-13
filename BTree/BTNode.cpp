@@ -1,4 +1,5 @@
 #include "BTNode.h"
+#include "NoSpaceException.h"
 #include<iostream>
 #include <cassert>
 #include<string.h>
@@ -14,7 +15,11 @@ void BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
 
     if(count == 0) {
         uint16 totalSize = serializeToTemporaryBuffer(key, value);
-        page->insertRecord(temporaryRecordBuffer, totalSize);
+        try {
+            page->insertRecord(temporaryRecordBuffer, totalSize);
+        } catch (NoSpaceException error) {
+            throw error;
+        }
         return;
     }
     for(uint16 i = 0; i < count; i++) {
@@ -22,7 +27,11 @@ void BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
         std::shared_ptr<Key> _key = kvFactory.getKey();
         if(key->compare(_key)) {
             uint16 totalSize = serializeToTemporaryBuffer(key, value);
-            page->insertRecord(temporaryRecordBuffer, totalSize, i);
+            try {
+                page->insertRecord(temporaryRecordBuffer, totalSize, i);
+            } catch (NoSpaceException error) {
+                throw error;
+            }
             return;
         }
     }

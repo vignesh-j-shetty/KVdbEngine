@@ -4,6 +4,7 @@
 #include<memory>
 #include "StorageManagerCommon.h"
 #include "TypeDefs.h"
+#include "NoSpaceException.h"
 #define SLOT_SIZE 2
 #define PAGE_RECORD_HEADER_SIZE 2
 #define PAGE_FREE_RECORD_HEADER_SIZE 4
@@ -23,7 +24,6 @@ Offset    - 2 bytes
 Count     - 2 byte
 Offset List - 2 bytes each
 */
-
 class Page {
     public:
     // Only should be accessed in DiskManager
