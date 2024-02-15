@@ -29,12 +29,15 @@ class Page {
     // Only should be accessed in DiskManager
     Page(char *_buffer, uint64 pageID);
     Page() {
+        buffer = nullptr;
         //Empty do nothing
     }
     // Copy Constructor
     Page(Page &page);
     ~Page() {
-        delete[] buffer;
+        if(buffer != nullptr) {
+            delete[] buffer;
+        }
     }
     inline uint64 getID() {
         return id;
@@ -54,6 +57,8 @@ class Page {
     void readRecord(char *data, uint16 dataLength, uint16 atIndex);
     // Removes record at given slot Index
     void removeRecord(uint16 atIndex);
+    // Moves half of the data to splittedPage
+    void split(std::shared_ptr<Page> splittedPage);
     private:
     char *buffer = nullptr;
     uint64 id;
