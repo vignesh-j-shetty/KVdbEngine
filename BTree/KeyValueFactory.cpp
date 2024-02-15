@@ -6,7 +6,7 @@ KeyValueFactory::KeyValueFactory(char* buffer) {
 }
 
 std::shared_ptr<Key> KeyValueFactory::getKey() {
-    char *p = buffer;
+    char *p = buffer + 16;
     uint8* type = (uint8*) p;
     p += 1;
     uint8* size = (uint8*) p;
@@ -24,7 +24,7 @@ std::shared_ptr<Key> KeyValueFactory::getKey() {
 }
 
 std::shared_ptr<Value> KeyValueFactory::getValue() {
-    char *p = buffer + *keySize + 2;
+    char *p = buffer + *keySize + 2 + 16;
     uint8* type = (uint8*) p;
     p += 1;
     uint8* size = (uint8*) p;

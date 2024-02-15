@@ -68,8 +68,13 @@ uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_
     uint8 keyType = key->getKeyType();
     uint8 valueType = value->getType();
     uint8 valueSize = value->size();
-    uint16 totalSize = keySize + valueSize + 4;
+    uint16 totalSize = keySize + valueSize + 4 + 16;
+    uint64 childPointer = 0;
     char *p = temporaryRecordBuffer;
+    memcpy(p, &childPointer, sizeof(childPointer));
+    p += sizeof(childPointer);
+    memcpy(p, &childPointer, sizeof(childPointer));
+    p += sizeof(childPointer);
     memcpy(p, &keyType, sizeof(keyType));
     p += sizeof(keyType);
     memcpy(p, &keySize, sizeof(keySize));
@@ -82,4 +87,14 @@ uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_
     p += sizeof(valueSize);
     value->serialize(p);
     return totalSize;
+}
+
+BTNode BTNode::split(std::shared_ptr<Page> splittedPage) {
+    uint16 count = page->getRecordCount();
+    uint16 totalRecordSize = 0;
+    for(uint16 i = 0; i < count; i++) {
+        totalRecordSize += (page->getRecordSize(i) + 2);
+    }
+    
+
 }

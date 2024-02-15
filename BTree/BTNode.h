@@ -25,6 +25,7 @@ class BTNode {
     }
     void insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void remove(uint16 index);
+    BTNode split(std::shared_ptr<Page> page);
     std::shared_ptr<Key> getKey(uint16 index);
     std::shared_ptr<Value> getValue(uint16 index);
     uint16 getItemCount();

@@ -120,33 +120,3 @@ void Page::addBlockToFreeList(uint16 atIndex) {
         *(header.freeBlockList) = removeOffset;
     }
 }
-
-void Page::split(std::shared_ptr<Page> splittedPage) {
-    uint16 totalRecordSize = 0;
-    uint16 recordCount = getRecordCount();
-    uint16 maxRecordSize = 0;
-    // Calculate the total size of records
-    for (uint16 i = 0; i < recordCount; ++i) {
-        uint16 recordSize = getRecordSize(i);
-        if (recordSize > maxRecordSize) {
-            maxRecordSize = recordSize;
-        }
-        totalRecordSize += recordSize;
-    }
-    uint16 sizeToMove = totalRecordSize / 2; // Half of the total record size to move
-    uint16 movedSize = 0;
-    char *recordData = new char[maxRecordSize];
-
-    for(uint16 i = 0; i < recordCount; i++) {
-        uint16 recordSize = getRecordSize(i);
-        movedSize += recordSize;
-        if(movedSize > sizeToMove) {
-            break;
-        }
-        readRecord(recordData, recordSize, i);
-        splittedPage->insertRecord(recordData, recordSize);
-        removeRecord(i);
-    }
-
-    delete[] recordData;
-}

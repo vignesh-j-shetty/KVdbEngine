@@ -92,24 +92,3 @@ TEST_F(PageTestFixture, CheckInsertOrder_c) {
   std::string pageData(temporaryBuffer, page->getRecordSize(readIndex));
   EXPECT_TRUE(pageData == "Hello-World1");
 }
-
-TEST_F(PageTestFixture, Split) {
-  resetBuffer();
-  std::string insertData = "Hello-World1";
-  page->insertRecord(insertData.data(), insertData.size(), 0);
-  insertData = "HelloWorld2";
-  page->insertRecord(insertData.data(), insertData.size(), 1);
-  insertData = "HelloWorld3";
-  page->insertRecord(insertData.data(), insertData.size(), 2);
-  insertData = "HelloWorld4";
-  page->insertRecord(insertData.data(), insertData.size(), 3);
-  insertData = "HelloWorld5";
-  page->insertRecord(insertData.data(), insertData.size(), 4);
-  char *splittedPageBuffer = new char[DISKMANAGER_PAGESIZE];
-  for(uint16 i = 0; i < DISKMANAGER_PAGESIZE; i++) {
-    splittedPageBuffer[i] = 0;
-  }
-  std::shared_ptr<Page> splittedPage(new Page(splittedPageBuffer, 2023));
-  page->split(splittedPage);
-  EXPECT_TRUE(splittedPage->getRecordCount() == 2);
-}
