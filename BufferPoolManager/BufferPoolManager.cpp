@@ -7,7 +7,31 @@ std::shared_ptr<Page> BufferPoolManager::getPage(uint64 id) {
             return frameList[i].pageCache;
         }
     }
-    std::shared_ptr<Page> page = diskManager.readPage(id);
+    std::shared_ptr<Page> page = diskManager->readPage(id);
+    addToCache(page);
+    return page;
+}
+
+std::shared_ptr<Page> BufferPoolManager::newPage() {
+    std::shared_ptr<Page> page = diskManager->createPage();
+    addToCache(page);
+    return page;
+}
+
+std::shared_ptr<Page> BufferPoolManager::getRootPage() {
+    return getPage(HEADER_SIZE);
+}
+
+void BufferPoolManager::flushAll() {
+    for(uint16 i = 0; i < frameList.size(); i++) {
+        std::shared_ptr<Page> page = frameList[i].pageCache;
+        if(page->isDirty()) {
+            diskManager->writePage(page);
+        }
+    }
+}
+
+void BufferPoolManager::addToCache(std::shared_ptr<Page> page) {
     if(frameList.size() < BUFFER_POOL_SIZE) {
         PageFrame frame;
         frame.accessBit = true;
@@ -22,20 +46,11 @@ std::shared_ptr<Page> BufferPoolManager::getPage(uint64 id) {
             } else {
                 frameList[clockHand].accessBit = true;
                 if(frameList[clockHand].pageCache->isDirty()) {
-                    diskManager.writePage(frameList[clockHand].pageCache);
+                    diskManager->writePage(frameList[clockHand].pageCache);
                 }
                 frameList[clockHand].pageCache = page;
                 break;
             }
         }
     }
-    return page;
-}
-
-std::shared_ptr<Page> BufferPoolManager::newPage() {
-    return diskManager.createPage();
-}
-
-std::shared_ptr<Page> BufferPoolManager::getRootPage() {
-    return getPage(HEADER_SIZE);
 }

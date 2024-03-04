@@ -1,8 +1,4 @@
-#include "Page.h"
-#include "BTNode.h"
-#include "StringKey.h"
-#include "StringValue.h"
-#include "DiskManager.h"
+#include "BTree.h"
 #include <string>
 #include<memory>
 #include<iostream>
@@ -21,17 +17,37 @@
 // auto end = std::chrono::high_resolution_clock::now();
 // std::chrono::duration<double, std::milli> ms_double = end - start;
 // std::cout << "Execution time: " << ms_double.count() << " milliseconds\n";
+
+
+void setup(BTree &btree) {
+    std::shared_ptr<Key> key(new StringKey("Hello40"));
+    std::shared_ptr<Value> value(new StringValue("fsdfs"));
+    // Insert 1
+    btree.insert(key, value);
+
+    // Insert 1
+    key->setData(std::any_cast<std::string>(std::string("Hello50")));
+    btree.insert(key, value);
+
+    // Insert 2
+    key->setData(std::any_cast<std::string>(std::string("Hello30")));
+    btree.insert(key, value);
+
+    // Insert 3
+    key->setData(std::any_cast<std::string>(std::string("Hello70")));
+    btree.insert(key, value);
+}
+
 int main() {
-    DiskManager diskmanger("test.db");
-    std::shared_ptr<Page> page = diskmanger.createPage();
-    BTNode node(page);
-    std::shared_ptr<Key> key(new StringKey("Hevhvhfhfghfhfe"));
-    std::shared_ptr<Value> value(new StringValue("he"));
-    try {
-        node.insert(key, value);
-    } catch (NoSpaceException e) {
-        std::cout<<"Hellow"<<std::endl;
+    BTree btree;
+    if(false) {
+        setup(btree);
+    } else {
+        std::shared_ptr<Key> key(new StringKey("Hello60"));
+        std::shared_ptr<Value> value(new StringValue("fsdfs"));
+        btree.insert(key, value);
     }
+    btree.debugPrint();
     return 0;
 }
 

@@ -11,6 +11,7 @@ class StringKey: public Key {
     virtual void serialize(void *data) override;
     virtual KeyType getKeyType() override;
     virtual bool compare(std::shared_ptr<Key> key) override;
+    virtual bool isEqual(std::shared_ptr<Key> key) override;
     private:
     std::string s;
 };

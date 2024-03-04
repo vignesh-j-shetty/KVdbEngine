@@ -30,6 +30,17 @@ class BTNodeTest: public testing::Test {
         key->setData(std::string("HelloKey4"));
         node.insert(key, value);
     }
+
+    void setData_b() {
+        resetBuffer();
+        std::shared_ptr<Key> key(new StringKey("HelloKey1"));
+        std::shared_ptr<Value> value(new StringValue("Hello"));
+        node.insert(key, value);
+        key->setData(std::string("HelloKey2"));
+        node.insert(key, value);
+        key->setData(std::string("HelloKey3"));
+        node.insert(key, value);
+    }
 };
 
 TEST_F(BTNodeTest, CheckInsert) {

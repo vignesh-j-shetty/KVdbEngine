@@ -28,3 +28,8 @@ bool StringKey::compare(std::shared_ptr<Key> key) {
     std::string key_s = std::any_cast<std::string>(key->getData());
     return s < key_s;
 }
+
+bool StringKey::isEqual(std::shared_ptr<Key> key) {
+    std::string key_s = std::any_cast<std::string>(key->getData());
+    return s == key_s;
+}

@@ -16,6 +16,7 @@ enum PageType {
 };
 
 class DiskManager;
+class BTNode;
 /*
 Page Header Format
 Page type - 1 byte
@@ -35,9 +36,7 @@ class Page {
     // Copy Constructor
     Page(Page &page);
     ~Page() {
-        if(buffer != nullptr) {
-            delete[] buffer;
-        }
+        delete[] buffer;
     }
     inline uint64 getID() {
         return id;
@@ -57,6 +56,12 @@ class Page {
     void readRecord(char *data, uint16 dataLength, uint16 atIndex);
     // Removes record at given slot Index
     void removeRecord(uint16 atIndex);
+    // Edits record's content
+    void updateRecord(char *data, uint16 index);
+    // Sets the page type
+    void setPageType(PageType type);
+    // Gets the page type
+    PageType getPageType();
 
     private:
     char *buffer = nullptr;
@@ -72,6 +77,7 @@ class Page {
     PageHeaders header;
     uint16* slotArray;
     friend class DiskManager;
+    friend class BTNode;
     //Functions
     void mapPointers();
     void allocateSpace(uint16 size, uint16 atIndex);

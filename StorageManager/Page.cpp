@@ -39,7 +39,7 @@ void Page::allocateSpace(uint16 size, uint16 atIndex) {
         uint16 slotCount = *(header.slotCount);
         char *nextSlotEndPosition  = (char *)(slotArray  + slotCount + 1);
         if(nextSlotEndPosition > adjustedSpace) {
-            std::cout<<"No Available free Space";
+            std::cout<<"No Available free Space\n";
             return throw NoSpaceException();
         }
     }
@@ -118,5 +118,32 @@ void Page::addBlockToFreeList(uint16 atIndex) {
         uint16* nextPointer = (uint16*) getRecordPointer(atIndex);
         *nextPointer = *(header.freeBlockList);
         *(header.freeBlockList) = removeOffset;
+    }
+}
+
+void Page::setPageType(PageType type) {
+    *(header.pageType) = type;
+    _isDirty = true;
+}
+
+
+void Page::updateRecord(char *data, uint16 index) {
+    uint16 size = getRecordSize(index);
+    char* record = getRecordPointer(index);
+    memcpy(record, data, size);
+    _isDirty = true;
+}
+
+PageType Page::getPageType() {
+
+    switch (*(header.pageType)) {
+        case 0:
+        return BT_ROOT_PAGE;
+        case 1:
+        return BT_INTERNAL_PAGE;
+        case 2:
+        return BT_LEAF_PAGE;
+        default:
+        return _OVERFLOW;
     }
 }

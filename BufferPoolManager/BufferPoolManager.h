@@ -8,19 +8,18 @@
 #include <vector>
 class BufferPoolManager {
     public:
-    BufferPoolManager() {
-        
-    }
-    BufferPoolManager(DiskManager diskManager) {
-        diskManager = diskManager;
+    BufferPoolManager(std::shared_ptr<DiskManager> diskManager) {
+        this->diskManager = diskManager;
         clockHand = 0;
         frameList.reserve(BUFFER_POOL_SIZE);
     }
     std::shared_ptr<Page> getPage(uint64 id);
     std::shared_ptr<Page> newPage();
     std::shared_ptr<Page> getRootPage();
+    void flushAll();
     private:
-    DiskManager diskManager;
+    std::shared_ptr<DiskManager> diskManager;
+    void addToCache(std::shared_ptr<Page> page);
     struct PageFrame {
         std::shared_ptr<Page> pageCache;
         bool accessBit;

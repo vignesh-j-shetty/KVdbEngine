@@ -9,7 +9,7 @@ class FileManager;
 class DiskManager {
     public:
     DiskManager() {
-        
+        temporaryBuffer = nullptr;
     }
     DiskManager(const char *fileName);
     DiskManager(DiskManager &diskManager);

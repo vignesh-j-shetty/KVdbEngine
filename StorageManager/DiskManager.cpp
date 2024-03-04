@@ -20,6 +20,7 @@ DiskManager::DiskManager(const char *fileName) {
     Header header;
     header.freeHeadPageID = header.rootPageID = 0;
     write(header);
+    createNewPage();
     std::cout<<"New db file successfully created"<<std::endl;
   } else {
     assert(fileManager->open());
@@ -58,8 +59,6 @@ void DiskManager::writePage(std::shared_ptr<Page> page) {
 }
 
 std::shared_ptr<Page> DiskManager::readPage(uint64 id) {
-  //Check if id is valid
-  assert((id-16)%2024 == 0);
   fileManager->seek(id, SET);
   char *buffer = new char[DISKMANAGER_PAGESIZE];
   assert(fileManager->read(buffer, DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);

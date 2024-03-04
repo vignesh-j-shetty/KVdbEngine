@@ -3,13 +3,21 @@ add_library(StringKey StringKey.cpp)
 add_library(StringValue StringValue.cpp)
 add_library(KeyValueFactory KeyValueFactory.cpp)
 add_library(BTNodeBufferPoolManager BTNodeBufferPoolManager.cpp)
+add_library(BTree BTree.cpp)
 
 target_include_directories(BTNode PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 target_include_directories(BTNodeBufferPoolManager PRIVATE ${CMAKE_SOURCE_DIR}/BufferPoolManager)
 target_include_directories(BTNodeBufferPoolManager PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
+target_include_directories(BTree PRIVATE ${CMAKE_SOURCE_DIR}/BufferPoolManager)
+target_include_directories(BTree PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 
 target_link_libraries(KeyValueFactory PUBLIC StringKey)
 target_link_libraries(KeyValueFactory PUBLIC StringValue)
 target_link_libraries(BTNode PRIVATE KeyValueFactory)
 target_link_libraries(BTNode PUBLIC Page)
+
 target_link_libraries(BTNodeBufferPoolManager PRIVATE BufferPoolManager)
+target_link_libraries(BTNodeBufferPoolManager PRIVATE DiskManager)
+
+target_link_libraries(BTree PRIVATE BTNodeBufferPoolManager)
+target_link_libraries(BTree PRIVATE BTNode)
