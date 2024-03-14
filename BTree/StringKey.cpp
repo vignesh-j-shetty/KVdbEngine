@@ -24,12 +24,20 @@ uint8 StringKey::size() {
     return s.size();
 }
 
-bool StringKey::compare(std::shared_ptr<Key> key) {
-    std::string key_s = std::any_cast<std::string>(key->getData());
-    return s < key_s;
+bool StringKey::operator<(std::shared_ptr<Key> key) {
+    std::string _s = std::any_cast<std::string>(key->getData());
+    bool res  = s < _s;
+    return res;
 }
 
-bool StringKey::isEqual(std::shared_ptr<Key> key) {
-    std::string key_s = std::any_cast<std::string>(key->getData());
-    return s == key_s;
+bool StringKey::operator>(std::shared_ptr<Key> key) {
+    std::string _s = std::any_cast<std::string>(key->getData());
+    bool res  = s > _s;
+    return res; 
+}
+
+bool StringKey::operator==(std::shared_ptr<Key> key) {
+    std::string _s = std::any_cast<std::string>(key->getData());
+    bool res  = s == _s;
+    return res;
 }

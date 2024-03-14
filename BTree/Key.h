@@ -12,8 +12,9 @@ class Key {
     virtual uint8 size() = 0;
     virtual void serialize(void *data) = 0;
     virtual KeyType getKeyType() = 0;
-    virtual bool compare(std::shared_ptr<Key> key) = 0;
-    virtual bool isEqual(std::shared_ptr<Key> key) = 0;
+    virtual bool operator<(std::shared_ptr<Key> key) = 0;
+    virtual bool operator>(std::shared_ptr<Key> key) = 0;
+    virtual bool operator==(std::shared_ptr<Key> key) = 0;
 };
 
 #endif

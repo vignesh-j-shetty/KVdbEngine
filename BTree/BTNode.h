@@ -24,7 +24,7 @@ class BTNode {
             delete temporaryRecordBuffer;
         }
     }
-    void insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
+    uint16 insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void remove(uint16 index);
     void split(std::shared_ptr<BTNode> splittedNode);
     uint16 search(std::shared_ptr<Key> key);
@@ -41,6 +41,8 @@ class BTNode {
     void swapID(std::shared_ptr<BTNode> node);
     void setRootNode();
     void setLeafNode();
+    void setInternalNode();
+    void compactSpace();
     private:
     std::shared_ptr<Page> page;
     char* temporaryRecordBuffer;

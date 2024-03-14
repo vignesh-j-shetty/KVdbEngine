@@ -19,7 +19,8 @@ class BTree {
     std::shared_ptr<BTNodeBufferPoolManager> bufferPoolManager;
     std::shared_ptr<DiskManager> diskManager;
     std::shared_ptr<Value> emptyValue;
-    void handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr<BTNode>> &nodeStack);
+    void handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr<BTNode>> &nodeStack, std::shared_ptr<Key> key, std::shared_ptr<Value> value);
+    void handleRootSplit(std::shared_ptr<BTNode> root, std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void printNode(std::shared_ptr<BTNode> rootNode);
 };
 

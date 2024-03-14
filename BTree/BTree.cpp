@@ -31,16 +31,11 @@ void BTree::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
     try {
         currentNode->insert(key, value);
     } catch(NoSpaceException e) {
-        handleSplit(currentNode, nodeStack);
-        std::shared_ptr<BTNode> parentNode;
         if(nodeStack.empty()) {
-            parentNode = bufferPoolManager->getRootPage();
+            handleRootSplit(currentNode, key, value);
         } else {
-            parentNode = nodeStack.top(); 
+            handleSplit(currentNode, nodeStack, key, value);
         }
-        uint16 index = parentNode->searchCmp(key);
-        std::shared_ptr<BTNode> nodeToInsert = bufferPoolManager->getNode(parentNode->getChildID(index));
-        nodeToInsert->insert(key, value);
     }
 }
 
@@ -75,26 +70,81 @@ void BTree::printNode(std::shared_ptr<BTNode> node) {
     std::cout<<" | ";
 }
 
-void BTree::handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr<BTNode>> &nodeStack) {
-    std::shared_ptr<BTNode> split1 = node;
-    std::shared_ptr<BTNode> split2 = bufferPoolManager->newNode();
-    split1->split(split2);
-    std::shared_ptr<Key> key = split1->getKey(split1->getItemCount() - 1);
+void BTree::handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr<BTNode>> &nodeStack, std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
+    uint64 previousLeftChild = 0;
+    uint64 previousRightChild = 0;
 
-    if(node->isInternalNode()) {
-        node->remove(split1->getItemCount() - 1);
+    while (true) {
+        try {
+            uint16 index = node->insert(key, value);
+            node->setChildID(index, previousLeftChild);
+            node->setChildID(index + 1, previousRightChild);
+            break;
+        } catch(NoSpaceException e) {
+            std::shared_ptr<BTNode> splittedNode = bufferPoolManager->newNode();
+            uint16 insertedIndex = node->searchCmp(key);
+            uint16 countBeforeSplit = node->getItemCount();
+            node->split(splittedNode);
+            node->compactSpace();
+
+            uint16 midIndex = countBeforeSplit/2;
+            if(insertedIndex < midIndex) {
+                uint16 index = node->insert(key, value);
+                node->setChildID(index, previousLeftChild);
+                node->setChildID(index + 1, previousRightChild);
+                key = node->getKey(node->getItemCount() - 1);
+            } else if(insertedIndex > midIndex) {
+                uint16 index = splittedNode->insert(key,value);
+                splittedNode->setChildID(index, previousLeftChild);
+                splittedNode->setChildID(index + 1, previousRightChild);
+                key = node->getKey(node->getItemCount() - 1);
+            } else if(insertedIndex == midIndex) {
+                if(splittedNode->isLeafNode()) {
+                    node->insert(key, value);
+                }
+            }
+            value = emptyValue;
+            previousLeftChild = node->getID();
+            previousRightChild = splittedNode->getID();
+
+            if(node->isRootNode()) {
+                std::shared_ptr<BTNode> newRootNode = bufferPoolManager->newNode();
+                std::shared_ptr<Key> key = node->getKey(node->getItemCount() - 1);
+                newRootNode->swapID(node);
+                newRootNode->insert(key, emptyValue);
+                newRootNode->setChildID(0, node->getID());
+                newRootNode->setChildID(1, splittedNode->getID());
+                node->setInternalNode();
+                splittedNode->setInternalNode();
+                break;
+            }
+
+            if(!nodeStack.empty()) {
+                node = nodeStack.top();
+                nodeStack.pop();
+            }
+        }
     }
-    // Handles the case when only one node is there
-    if(nodeStack.size() == 0) {
-        std::shared_ptr<BTNode> newRootNode = bufferPoolManager->newNode();
-        split1->swapID(newRootNode);
-        newRootNode->insert(key, emptyValue);
-        newRootNode->setChildID(0, split1->getID());
-        newRootNode->setChildID(1, split2->getID());
+    return;
+}
 
-        split1->setLeafNode();
-        split2->setLeafNode();
-        return;
+void BTree::handleRootSplit(std::shared_ptr<BTNode> root, std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
+    std::shared_ptr<BTNode> splittedNode = bufferPoolManager->newNode();
+    std::shared_ptr<BTNode> rootNode = bufferPoolManager->newNode();
+    std::shared_ptr<BTNode> node = root;
+    uint16 insertIndex = node->searchCmp(key);
+    uint16 countBeforeSplit = node->getItemCount();
+    uint16 midIndex = countBeforeSplit/2;
+    node->swapID(rootNode);
+    node->split(splittedNode);
+    if(insertIndex <= midIndex) {
+        node->insert(key, value);
+    } else {
+        splittedNode->insert(key, value);
     }
-
+    std::shared_ptr<Key> medianKey = node->getKey(node->getItemCount() - 1);
+    rootNode->insert(medianKey, emptyValue);
+    rootNode->setChildID(0, node->getID());
+    rootNode->setChildID(1, splittedNode->getID());
+    rootNode->setRootNode();
 }

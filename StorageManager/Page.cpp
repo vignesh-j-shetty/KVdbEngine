@@ -147,3 +147,20 @@ PageType Page::getPageType() {
         return _OVERFLOW;
     }
 }
+
+void Page::compactSpace() {
+    char *compactPageBuffer = new char[DISKMANAGER_PAGESIZE];
+    memset(compactPageBuffer, 0, DISKMANAGER_PAGESIZE);
+    Page compactedPage(compactPageBuffer, 0);
+    for (uint16 i = 0; i < getRecordCount(); i++) {
+        uint16 size = getRecordSize(i);
+        char *buffer = new char[size];
+        readRecord(buffer, size, i);
+        compactedPage.insertRecord(buffer, size, i);
+        delete[] buffer;
+    }
+    uint16 pageType = *(header.pageType);
+    memcpy(buffer, compactedPage.buffer, DISKMANAGER_PAGESIZE);
+    *(header.pageType) = pageType;
+    _isDirty = true;
+ }

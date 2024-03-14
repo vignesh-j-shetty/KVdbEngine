@@ -10,7 +10,7 @@
 #define PAGE_FREE_RECORD_HEADER_SIZE 4
 #define PAGE_HEADER_SIZE 7
 #define PAGE_END (buffer + DISKMANAGER_PAGESIZE)
-
+#define MAX_RECORD_SIZE 50
 enum PageType {
     BT_ROOT_PAGE = 0, BT_INTERNAL_PAGE = 1, BT_LEAF_PAGE = 2, _OVERFLOW = 3
 };
@@ -62,6 +62,8 @@ class Page {
     void setPageType(PageType type);
     // Gets the page type
     PageType getPageType();
+    // Compacts memory
+    void compactSpace();
 
     private:
     char *buffer = nullptr;

@@ -10,7 +10,7 @@ BTNode::BTNode(std::shared_ptr<Page> page) {
     kvFactory = KeyValueFactory(temporaryRecordBuffer);
 }
 
-void BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
+uint16 BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
     uint16 count = page->getRecordCount();
 
     if(count == 0) {
@@ -20,25 +20,27 @@ void BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
         } catch (NoSpaceException error) {
             throw error;
         }
-        return;
+        return 0;
     }
     for(uint16 i = 0; i < count; i++) {
         page->readRecord(temporaryRecordBuffer, page->getRecordSize(i), i);
         std::shared_ptr<Key> _key = kvFactory.getKey();
-        if(key->isEqual(_key)) {
+        if(*key == _key) {
             assert(false);
-        } else if(key->compare(_key)) {
+        } else if(*key < _key) {
             uint16 totalSize = serializeToTemporaryBuffer(key, value);
             try {
                 page->insertRecord(temporaryRecordBuffer, totalSize, i);
+                return i;
             } catch (NoSpaceException error) {
                 throw error;
             }
-            return;
         }
     }
+    // When greater than all elements in node
     uint16 totalSize = serializeToTemporaryBuffer(key, value);
     page->insertRecord(temporaryRecordBuffer, totalSize, count);
+    return count;
 }
 
 void BTNode::remove(uint16 index) {
@@ -92,6 +94,7 @@ uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_
 }
 
 void BTNode::split(std::shared_ptr<BTNode> splittedNode) {
+    splittedNode->page->setPageType(page->getPageType());
     uint16 count = page->getRecordCount();
     uint16 start = count/2;
     std::shared_ptr<Page> splittedPage = splittedNode->page;
@@ -138,7 +141,7 @@ uint16 BTNode::search(std::shared_ptr<Key> key) {
     for(uint16 i = 0; i < count; i++) {
         page->readRecord(temporaryRecordBuffer, page->getRecordSize(i), i);
         std::shared_ptr<Key> _key = kvFactory.getKey();
-        if(key->isEqual(key)) {
+        if(*key == _key) {
             return i;
         }
     }
@@ -150,7 +153,7 @@ uint16 BTNode::searchCmp(std::shared_ptr<Key> key) {
     for(uint16 i = 0; i < count; i++) {
         page->readRecord(temporaryRecordBuffer, page->getRecordSize(i), i);
         std::shared_ptr<Key> _key = kvFactory.getKey();
-        if(!_key->compare(key)) {
+        if(!(*_key < key)) {
             return i;
         }
     }
@@ -178,4 +181,12 @@ uint64 BTNode::getID() {
 
 bool BTNode::isInternalNode() {
     return page->getPageType() == BT_INTERNAL_PAGE;
+}
+
+void BTNode::compactSpace() {
+    page->compactSpace();
+}
+
+void BTNode::setInternalNode() {
+    page->setPageType(BT_INTERNAL_PAGE);
 }

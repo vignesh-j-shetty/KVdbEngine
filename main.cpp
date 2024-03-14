@@ -20,21 +20,29 @@
 
 
 void setup(BTree &btree) {
-    std::shared_ptr<Key> key(new StringKey("Hello40"));
+    std::shared_ptr<Key> key(new StringKey("abc08"));
     std::shared_ptr<Value> value(new StringValue("fsdfs"));
     // Insert 1
     btree.insert(key, value);
 
     // Insert 1
-    key->setData(std::any_cast<std::string>(std::string("Hello50")));
+    key->setData(std::any_cast<std::string>(std::string("abc03")));
     btree.insert(key, value);
 
     // Insert 2
-    key->setData(std::any_cast<std::string>(std::string("Hello30")));
+    key->setData(std::any_cast<std::string>(std::string("abc04")));
     btree.insert(key, value);
 
     // Insert 3
-    key->setData(std::any_cast<std::string>(std::string("Hello70")));
+    key->setData(std::any_cast<std::string>(std::string("abc05")));
+    btree.insert(key, value);
+    
+    // Insert 4
+    key->setData(std::any_cast<std::string>(std::string("abc06")));
+    btree.insert(key, value);
+
+    // Insert 5
+    key->setData(std::any_cast<std::string>(std::string("abc07")));
     btree.insert(key, value);
 }
 
@@ -43,8 +51,8 @@ int main() {
     if(false) {
         setup(btree);
     } else {
-        std::shared_ptr<Key> key(new StringKey("Hello60"));
-        std::shared_ptr<Value> value(new StringValue("fsdfs"));
+        std::shared_ptr<Key> key(new StringKey("abc24"));
+        std::shared_ptr<Value> value(new StringValue("fsd"));
         btree.insert(key, value);
     }
     btree.debugPrint();
