@@ -8,9 +8,10 @@
 #define SLOT_SIZE 2
 #define PAGE_RECORD_HEADER_SIZE 2
 #define PAGE_FREE_RECORD_HEADER_SIZE 4
-#define PAGE_HEADER_SIZE 7
+#define PAGE_HEADER_SIZE 15
 #define PAGE_END (buffer + DISKMANAGER_PAGESIZE)
 #define MAX_RECORD_SIZE 50
+#define OTHER_DATA_SIZE 8
 enum PageType {
     BT_ROOT_PAGE = 0, BT_INTERNAL_PAGE = 1, BT_LEAF_PAGE = 2, _OVERFLOW = 3
 };
@@ -18,12 +19,14 @@ enum PageType {
 class DiskManager;
 class BTNode;
 /*
-Page Header Format
-Page type - 1 byte
-Free List - 2 bytes
-Offset    - 2 bytes
-Count     - 2 byte
-Offset List - 2 bytes each
+Page Header Format   
+Type         Size          Offset
+Page type -  1 byte           0
+Other Data - 8 bytes          1
+Free List -  2 bytes          9
+Offset    -  2 bytes          11
+Count     -  2 byte           13
+Offset List -2 bytes each     15
 */
 class Page {
     public:
@@ -60,6 +63,10 @@ class Page {
     void updateRecord(char *data, uint16 index);
     // Sets the page type
     void setPageType(PageType type);
+    // Reads other miscellaneous data in header of 8 bytes
+    void readOtherData(char *data);
+    // Updates other miscellaneous data in header of 8 bytes
+    void updateOtherData(char *data);
     // Gets the page type
     PageType getPageType();
     // Compacts memory
@@ -71,6 +78,7 @@ class Page {
     //Headers
     struct PageHeaders {
         uint8 *pageType = nullptr;
+        char *otherData = nullptr;
         uint16 *freeBlockList = nullptr;
         uint16 *freeSpaceOffset = nullptr;
         uint16 *slotCount = nullptr;

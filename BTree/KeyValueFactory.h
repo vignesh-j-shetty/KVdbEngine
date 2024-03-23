@@ -4,6 +4,7 @@
 #include "Value.h"
 #include "StringKey.h"
 #include "StringValue.h"
+#include "UIntKey.h"
 #include <memory>
 #include <string>
 #include <cassert>

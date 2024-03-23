@@ -21,10 +21,11 @@ Page::Page(char *_buffer, uint64 pageID) {
 
 void Page::mapPointers() {
     header.pageType = (uint8 *)buffer;
-    header.freeBlockList = (uint16*)(buffer + 1);
-    header.freeSpaceOffset = (uint16 *)(buffer + 3);
-    header.slotCount = (uint16 *)(buffer + 5);
-    header.slotList = (uint16 *) (buffer + 7);
+    header.otherData = buffer + 1;
+    header.freeBlockList = (uint16*)(buffer + 9);
+    header.freeSpaceOffset = (uint16 *)(buffer + 11);
+    header.slotCount = (uint16 *)(buffer + 13);
+    header.slotList = (uint16 *) (buffer + 15);
     slotArray = (uint16*) (buffer + PAGE_HEADER_SIZE);
 }
 
@@ -160,7 +161,20 @@ void Page::compactSpace() {
         delete[] buffer;
     }
     uint16 pageType = *(header.pageType);
+    char *otherData = new char[OTHER_DATA_SIZE];
+    memcpy(otherData, buffer + 1, OTHER_DATA_SIZE);
     memcpy(buffer, compactedPage.buffer, DISKMANAGER_PAGESIZE);
+    memcpy(buffer + 1, otherData, OTHER_DATA_SIZE);
+    delete[] otherData;
     *(header.pageType) = pageType;
+    _isDirty = true;
+ }
+
+ void Page::readOtherData(char *data) {
+    memcpy(data, header.otherData, 8);
+ }
+
+  void Page::updateOtherData(char *data) {
+    memcpy(header.otherData, data, 8);
     _isDirty = true;
  }

@@ -15,5 +15,6 @@ target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/BufferPoolManager)
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 
 target_link_libraries(main StringKey)
+target_link_libraries(main UIntKey)
 target_link_libraries(main StringValue)
 target_link_libraries(main BTree)

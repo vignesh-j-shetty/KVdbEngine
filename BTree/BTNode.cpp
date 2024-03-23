@@ -44,7 +44,14 @@ uint16 BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
 }
 
 void BTNode::remove(uint16 index) {
-    assert(index < page->getRecordCount());
+    uint16 count = page->getRecordCount();
+    assert(index < count);
+    if(index == (count - 1) && index > 0) {
+        uint64 lastChildIdAfterDelete = getChildID(index);
+        uint64* id = (uint64*) temporaryRecordBuffer;
+        *id = lastChildIdAfterDelete;
+        page->updateOtherData(temporaryRecordBuffer);
+    }
     page->removeRecord(index);
 }
 
@@ -72,11 +79,10 @@ uint16 BTNode::serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_
     uint8 keyType = key->getKeyType();
     uint8 valueType = value->getType();
     uint8 valueSize = value->size();
-    uint16 totalSize = keySize + valueSize + 4 + 16;
+    // 4 is keySize, KeyType, valueType and valueSize and 8 is childPointer
+    uint16 totalSize = keySize + valueSize + 4 + 8;
     uint64 childPointer = 0;
     char *p = temporaryRecordBuffer;
-    memcpy(p, &childPointer, sizeof(childPointer));
-    p += sizeof(childPointer);
     memcpy(p, &childPointer, sizeof(childPointer));
     p += sizeof(childPointer);
     memcpy(p, &keyType, sizeof(keyType));
@@ -98,34 +104,52 @@ void BTNode::split(std::shared_ptr<BTNode> splittedNode) {
     uint16 count = page->getRecordCount();
     uint16 start = count/2;
     std::shared_ptr<Page> splittedPage = splittedNode->page;
+
     for(uint16 i = start; i < count; i++) {
         uint16 recordSize = page->getRecordSize(i);
         page->readRecord(temporaryRecordBuffer, recordSize, i);
         splittedPage->insertRecord(temporaryRecordBuffer, recordSize, i - start);
     }
-
+    uint64 lastChildIDAfterDelete = getChildID(start);
+    uint64 lastChild = getChildID(count);
     for(uint16 i = start; i < count; i++) {
         page->removeRecord(start);
     }
+    page->readOtherData(temporaryRecordBuffer);
+    {
+        uint64 *id = (uint64*) temporaryRecordBuffer;
+        *id = lastChildIDAfterDelete;
+        page->updateOtherData(temporaryRecordBuffer);
+    }
+    splittedNode->setChildID(splittedNode->getItemCount(), lastChild);
 }
 
 uint64 BTNode::getChildID(uint16 index) {
     uint16 recordCount = page->getRecordCount();
     assert(index <= recordCount);
-    uint16 accessIndex = index == recordCount ? index - 1 : index;
-    page->readRecord(temporaryRecordBuffer, page->getRecordSize(accessIndex), accessIndex);
-    uint64 *childPointer = (uint64*)(index == recordCount ? (temporaryRecordBuffer + sizeof(uint64)) : temporaryRecordBuffer);
-    return *childPointer;
+    if(index < recordCount) {
+        page->readRecord(temporaryRecordBuffer, sizeof(uint64), index);
+    } else {
+        page->readOtherData(temporaryRecordBuffer);
+    }
+    uint64 *ID = (uint64*) temporaryRecordBuffer;
+    return *ID;
 }
 
 void BTNode::setChildID(uint16 index, uint64 id) {
     uint16 recordCount = page->getRecordCount();
     assert(index <= recordCount);
-    uint16 accessIndex = index == recordCount ? index - 1 : index;
-    page->readRecord(temporaryRecordBuffer, page->getRecordSize(accessIndex), accessIndex);
-    uint64 *childPointer = (uint64*)(index == recordCount ? (temporaryRecordBuffer + sizeof(uint64)) : temporaryRecordBuffer);
-    *childPointer = id;
-    page->updateRecord(temporaryRecordBuffer, accessIndex);
+    uint64 *setID = (uint64*) temporaryRecordBuffer;
+    if(index < recordCount) {
+        uint16 recordSize = page->getRecordSize(index);
+        page->readRecord(temporaryRecordBuffer, recordSize, index);
+        *setID = id;
+        page->updateRecord(temporaryRecordBuffer, index);
+    } else {
+        page->readOtherData(temporaryRecordBuffer);
+        *setID = id;
+        page->updateOtherData(temporaryRecordBuffer);
+    }
 }
 
 bool BTNode::isRootNode() {

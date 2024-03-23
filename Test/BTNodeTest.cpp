@@ -103,3 +103,14 @@ TEST_F(BTNodeTest, CheckDelete_b) {
         EXPECT_TRUE(storedElement == expectedElements[i]);
     }
 }
+
+TEST_F(BTNodeTest, ChildSetTest_a) {
+    resetBuffer();
+    setData_a();
+    node.remove(3);
+    std::vector<std::string> expectedElements = {"HelloKey1", "HelloKey2", "HelloKey3"};
+    for(uint8 i = 0; i < 3; i++) {
+        std::string storedElement = std::any_cast<std::string>(node.getKey(i)->getData());
+        EXPECT_TRUE(storedElement == expectedElements[i]);
+    }
+}

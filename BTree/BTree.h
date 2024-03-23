@@ -22,6 +22,7 @@ class BTree {
     void handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr<BTNode>> &nodeStack, std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void handleRootSplit(std::shared_ptr<BTNode> root, std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void printNode(std::shared_ptr<BTNode> rootNode);
+    void debugPrintKeyChild(std::shared_ptr<BTNode> node);
 };
 
 #endif
