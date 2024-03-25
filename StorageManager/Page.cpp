@@ -40,7 +40,6 @@ void Page::allocateSpace(uint16 size, uint16 atIndex) {
         uint16 slotCount = *(header.slotCount);
         char *nextSlotEndPosition  = (char *)(slotArray  + slotCount + 1);
         if(nextSlotEndPosition > adjustedSpace) {
-            std::cout<<"No Available free Space\n";
             return throw NoSpaceException();
         }
     }

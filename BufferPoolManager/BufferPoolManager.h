@@ -6,6 +6,7 @@
 #include <exception>
 #include "DiskManager.h"
 #include <vector>
+#include <cassert>
 class BufferPoolManager {
     public:
     BufferPoolManager(std::shared_ptr<DiskManager> diskManager) {
@@ -16,6 +17,7 @@ class BufferPoolManager {
     std::shared_ptr<Page> getPage(uint64 id);
     std::shared_ptr<Page> newPage();
     std::shared_ptr<Page> getRootPage();
+    void setIsPinned(uint64 pageID, bool pinStatus);
     void flushAll();
     private:
     std::shared_ptr<DiskManager> diskManager;
@@ -23,6 +25,7 @@ class BufferPoolManager {
     struct PageFrame {
         std::shared_ptr<Page> pageCache;
         bool accessBit;
+        bool isPinned;
     };
     std::vector<PageFrame> frameList;
     uint16 clockHand;

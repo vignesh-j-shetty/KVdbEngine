@@ -56,6 +56,7 @@ void DiskManager::read(Header &header) {
 void DiskManager::writePage(std::shared_ptr<Page> page) {
   fileManager->seek(page->id, SET);
   assert(fileManager->write(page->buffer, DISKMANAGER_PAGESIZE) == DISKMANAGER_PAGESIZE);
+  page->_isDirty = false;
 }
 
 std::shared_ptr<Page> DiskManager::readPage(uint64 id) {

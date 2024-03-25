@@ -137,6 +137,9 @@ uint64 BTNode::getChildID(uint16 index) {
 }
 
 void BTNode::setChildID(uint16 index, uint64 id) {
+    if(id == 100) {
+        std::cout<<"dasd";
+    }
     uint16 recordCount = page->getRecordCount();
     assert(index <= recordCount);
     uint64 *setID = (uint64*) temporaryRecordBuffer;
@@ -188,7 +191,8 @@ void BTNode::swapID(std::shared_ptr<BTNode> node) {
     uint64 id = node->page->id;
     node->page->id = page->id;
     page->id = id;
-    page->_isDirty = node->page->_isDirty = true;
+    page->_isDirty = true;
+    node->page->_isDirty = true;
 }
 
 void BTNode::setRootNode() {
