@@ -107,9 +107,9 @@ void BTree::handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr
                 uint16 index = node->insert(key, value);
                 node->setChildID(index, previousLeftChild);
                 node->setChildID(index + 1, previousRightChild);
-                key = node->getKey(node->getItemCount() - 1);
-                if(node->isInternalNode()) {
-                    node->remove(node->getItemCount() - 1);
+                key = splittedNode->getKey(0);
+                if(splittedNode->isInternalNode()) {
+                    splittedNode->remove(0);
                 }
             } else if(insertedIndex > midIndex) {
                 uint16 index = splittedNode->insert(key,value);
@@ -120,9 +120,6 @@ void BTree::handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr
                     splittedNode->remove(0);
                 }
             } else if(insertedIndex == midIndex) {
-                if(splittedNode->isLeafNode()) {
-                    node->insert(key, value);
-                }
                 node->setChildID(node->getItemCount(), previousLeftChild);
                 splittedNode->setChildID(0, previousRightChild);
             }
@@ -132,14 +129,13 @@ void BTree::handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr
 
             if(node->isRootNode()) {
                 std::shared_ptr<BTNode> newRootNode = bufferPoolManager->newNode();
-                std::shared_ptr<Key> key = node->getKey(node->getItemCount() - 1);
                 newRootNode->swapID(node);
                 newRootNode->insert(key, emptyValue);
                 newRootNode->setChildID(0, node->getID());
                 newRootNode->setChildID(1, splittedNode->getID());
+                splittedNode->remove(0);
                 node->setInternalNode();
                 splittedNode->setInternalNode();
-                node->remove(node->getItemCount() - 1);
                 bufferPoolManager->setIsPinnnedStatus(node->getID(), false);
                 bufferPoolManager->setIsPinnnedStatus(splittedNode->getID(), false);
                 break;
@@ -148,6 +144,8 @@ void BTree::handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr
             bufferPoolManager->setIsPinnnedStatus(splittedNode->getID(), false);
             if(!nodeStack.empty()) {
                 node = nodeStack.top();
+                // To refresh buffer pool
+                node = bufferPoolManager->getNode(node->getID());
                 nodeStack.pop();
             }
         }
@@ -169,7 +167,9 @@ void BTree::handleRootSplit(std::shared_ptr<BTNode> root, std::shared_ptr<Key> k
     } else {
         splittedNode->insert(key, value);
     }
-    std::shared_ptr<Key> medianKey = node->getKey(node->getItemCount() - 1);
+    std::shared_ptr<Key> medianKey = splittedNode->getKey(0);
+    node->setLeafNode();
+    splittedNode->setLeafNode();
     rootNode->insert(medianKey, emptyValue);
     rootNode->setChildID(0, node->getID());
     rootNode->setChildID(1, splittedNode->getID());
@@ -177,6 +177,13 @@ void BTree::handleRootSplit(std::shared_ptr<BTNode> root, std::shared_ptr<Key> k
 }
 
 void BTree::debugPrintKeyChild(std::shared_ptr<BTNode> node) {
+    if(node->isInternalNode()) {
+        std::cout<<"Internal node"<<std::endl;
+    } else if(node->isLeafNode()) {
+        std::cout<<"Leaf node"<<std::endl;
+    } else if(node->isRootNode()) {
+        std::cout<<"Root node"<<std::endl;
+    }
     std::cout<<"ID : "<<node->getID()<<std::endl;
     for(uint16 i = 0; i <= node->getItemCount(); i++) {
         if(i == node->getItemCount()) {

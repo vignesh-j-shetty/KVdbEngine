@@ -137,9 +137,6 @@ uint64 BTNode::getChildID(uint16 index) {
 }
 
 void BTNode::setChildID(uint16 index, uint64 id) {
-    if(id == 100) {
-        std::cout<<"dasd";
-    }
     uint16 recordCount = page->getRecordCount();
     assert(index <= recordCount);
     uint64 *setID = (uint64*) temporaryRecordBuffer;

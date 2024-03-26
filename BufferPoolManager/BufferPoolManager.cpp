@@ -28,8 +28,10 @@ void BufferPoolManager::setIsPinned(uint64 pageID, bool pinStatus) {
     for(uint16 i = 0; i < frameList.size(); i++) {
         if(frameList[i].pageCache->getID() == pageID) {
             frameList[i].isPinned = pinStatus;
+            return;
         }
     }
+    assert(false && "Unabled to find item in BufferPool Cache");
 }
 
 void BufferPoolManager::flushAll() {
@@ -53,7 +55,7 @@ void BufferPoolManager::addToCache(std::shared_ptr<Page> page) {
         for(;;) {
             if(frameList[clockHand].accessBit) {
                 frameList[clockHand].accessBit = false;
-                clockHand = (clockHand + 1) % (frameList.size());
+                clockHand = (clockHand + 1) % frameList.size();
             } else if(!frameList[clockHand].isPinned) {
                 frameList[clockHand].accessBit = true;
                 if(frameList[clockHand].pageCache->isDirty()) {
@@ -62,7 +64,7 @@ void BufferPoolManager::addToCache(std::shared_ptr<Page> page) {
                 frameList[clockHand].pageCache = page;
                 break;
             } else {
-                clockHand = (clockHand + 1) % (frameList.size());
+                clockHand = (clockHand + 1) % frameList.size();
             }
         }
     }

@@ -1,6 +1,6 @@
 #ifndef BUFFERPOOLMANAGER
 #define BUFFERPOOLMANAGER
-#define BUFFER_POOL_SIZE 10
+#define BUFFER_POOL_SIZE 200
 #include "Page.h"
 #include <memory>
 #include <exception>
