@@ -152,14 +152,6 @@ void BTNode::setChildID(uint16 index, uint64 id) {
     }
 }
 
-bool BTNode::isRootNode() {
-    return page->getPageType() == BT_ROOT_PAGE;
-}
-
-bool BTNode::isLeafNode() {
-    return page->getPageType() == BT_LEAF_PAGE;
-}
-
 uint16 BTNode::search(std::shared_ptr<Key> key) {
     uint16 count = page->getRecordCount();
     for(uint16 i = 0; i < count; i++) {
@@ -177,7 +169,7 @@ uint16 BTNode::searchCmp(std::shared_ptr<Key> key) {
     for(uint16 i = 0; i < count; i++) {
         page->readRecord(temporaryRecordBuffer, page->getRecordSize(i), i);
         std::shared_ptr<Key> _key = kvFactory.getKey();
-        if(!(*_key < key)) {
+        if(!(*_key <= key)) {
             return i;
         }
     }
@@ -192,26 +184,48 @@ void BTNode::swapID(std::shared_ptr<BTNode> node) {
     node->page->_isDirty = true;
 }
 
-void BTNode::setRootNode() {
-    page->setPageType(BT_ROOT_PAGE);
-}
-
-void BTNode::setLeafNode() {
-    page->setPageType(BT_LEAF_PAGE);
-}
-
 uint64 BTNode::getID() {
     return page->getID();
-}
-
-bool BTNode::isInternalNode() {
-    return page->getPageType() == BT_INTERNAL_PAGE;
 }
 
 void BTNode::compactSpace() {
     page->compactSpace();
 }
 
-void BTNode::setInternalNode() {
-    page->setPageType(BT_INTERNAL_PAGE);
+NodeType BTNode::getNodeType() {
+    return mapToNodeType(page->getPageType());
+}
+
+void BTNode::setNodeType(NodeType type) {
+    page->setPageType(mapToPageType(type));
+}
+
+NodeType BTNode::mapToNodeType(PageType type) {    
+    switch (type) {
+        case BT_ROOT_PAGE:
+            return ROOT_NODE;
+        case BT_INTERNAL_PAGE:
+            return INTERNAL_NODE;
+        case BT_LEAF_PAGE:
+            return LEAF_NODE;
+        case _OVERFLOW:
+            return OVERFLOW_NODE;
+        default:
+        assert(false && "Unknown PageType");
+    }
+}
+
+PageType BTNode::mapToPageType(NodeType type) {
+    switch (type) {
+        case ROOT_NODE:
+            return BT_ROOT_PAGE;
+        case INTERNAL_NODE:
+            return BT_INTERNAL_PAGE;
+        case LEAF_NODE:
+            return BT_LEAF_PAGE;
+        case OVERFLOW_NODE:
+            return _OVERFLOW;
+        default:
+            assert(false && "Unknown NodeType");
+    }
 }

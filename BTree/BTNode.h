@@ -7,7 +7,10 @@
 #include "KeyValueFactory.h"
 #include <memory>
 #define RECORD_MAX_SIZE 512
-#define INTERNAL_NODE_MAX_ELEMENTS 80
+
+enum NodeType {
+    ROOT_NODE = 0, INTERNAL_NODE = 1, LEAF_NODE = 2, OVERFLOW_NODE = 3
+};
 
 class BTNode {
     public:
@@ -35,19 +38,17 @@ class BTNode {
     uint64 getChildID(uint16 index);
     uint64 getID();
     void setChildID(uint16 index, uint64 id);
-    bool isRootNode();
-    bool isLeafNode();
-    bool isInternalNode();
+    NodeType getNodeType();
+    void setNodeType(NodeType type);
     void swapID(std::shared_ptr<BTNode> node);
-    void setRootNode();
-    void setLeafNode();
-    void setInternalNode();
     void compactSpace();
     private:
     std::shared_ptr<Page> page;
     char* temporaryRecordBuffer;
     KeyValueFactory kvFactory;
     uint16 serializeToTemporaryBuffer(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
+    NodeType mapToNodeType(PageType type);
+    PageType mapToPageType(NodeType type);
 };
 
 #endif

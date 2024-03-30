@@ -30,6 +30,12 @@ bool StringKey::operator<(std::shared_ptr<Key> key) {
     return res;
 }
 
+bool StringKey::operator<=(std::shared_ptr<Key> key) {
+    std::string _s = std::any_cast<std::string>(key->getData());
+    bool res  = s < _s;
+    return res;
+}
+
 bool StringKey::operator>(std::shared_ptr<Key> key) {
     std::string _s = std::any_cast<std::string>(key->getData());
     bool res  = s > _s;

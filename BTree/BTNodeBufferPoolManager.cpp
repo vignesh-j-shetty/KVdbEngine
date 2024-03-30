@@ -21,4 +21,3 @@ void BTNodeBufferPoolManager::flushAll() {
 void BTNodeBufferPoolManager::setIsPinnnedStatus(uint64 pageID, bool pinStatus) {
     bufferPoolManager->setIsPinned(pageID, pinStatus);
 }
-

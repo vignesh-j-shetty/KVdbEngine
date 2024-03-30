@@ -15,6 +15,7 @@ class BTree {
     }
     void insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void debugPrint();
+    bool isKeyPresent(std::shared_ptr<Key> key);
     private:
     std::shared_ptr<BTNodeBufferPoolManager> bufferPoolManager;
     std::shared_ptr<DiskManager> diskManager;
@@ -23,6 +24,7 @@ class BTree {
     void handleRootSplit(std::shared_ptr<BTNode> root, std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void printNode(std::shared_ptr<BTNode> rootNode);
     void debugPrintKeyChild(std::shared_ptr<BTNode> node);
+    std::shared_ptr<BTNode> searchNode(std::shared_ptr<Key> key, std::stack<std::shared_ptr<BTNode>> &nodeStack);
 };
 
 #endif

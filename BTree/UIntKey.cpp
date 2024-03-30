@@ -29,6 +29,11 @@ bool UIntKey::operator<(std::shared_ptr<Key> key) {
     return keyValue < _key;
 }
 
+bool UIntKey::operator<=(std::shared_ptr<Key> key) {
+    uint64 _key = std::any_cast<uint64>(key->getData());
+    return keyValue <= _key;
+}
+
 bool UIntKey::operator>(std::shared_ptr<Key> key) {
     uint64 _key = std::any_cast<uint64>(key->getData());
     return keyValue > _key;
