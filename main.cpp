@@ -50,11 +50,11 @@ uint64 getGenerateNewNumber(std::set<uint64> &generatedValue, const uint64 maxVa
 }
 
 void random_insert(BTree &btree, std::vector<uint64> &generatedNumber) {
-    const uint64 maxNumber = 999999999999;
+    const uint64 maxNumber = 99999999;
     std::set<uint64> generatedValue;
     std::shared_ptr<Key> key(new UIntKey(0));
     std::shared_ptr<Value> value(new StringValue("vignesh"));
-    const uint64 itemCount = 1000000;
+    const uint64 itemCount = 700000;
     for(uint64 i = 0; i < itemCount; i++) {
         uint64 randomnumber = getGenerateNewNumber(generatedValue, maxNumber);
         generatedNumber.push_back(randomnumber);

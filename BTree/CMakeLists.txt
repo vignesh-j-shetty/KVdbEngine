@@ -5,12 +5,16 @@ add_library(UIntKey UIntKey.cpp)
 add_library(KeyValueFactory KeyValueFactory.cpp)
 add_library(BTNodeBufferPoolManager BTNodeBufferPoolManager.cpp)
 add_library(BTree BTree.cpp)
+add_library(BTNodeSplitManager BTNodeSplitManager.cpp)
 
 target_include_directories(BTNode PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 target_include_directories(BTNodeBufferPoolManager PRIVATE ${CMAKE_SOURCE_DIR}/BufferPoolManager)
 target_include_directories(BTNodeBufferPoolManager PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 target_include_directories(BTree PRIVATE ${CMAKE_SOURCE_DIR}/BufferPoolManager)
 target_include_directories(BTree PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
+
+target_include_directories(BTNodeSplitManager PRIVATE ${CMAKE_SOURCE_DIR}/BufferPoolManager)
+target_include_directories(BTNodeSplitManager PRIVATE ${CMAKE_SOURCE_DIR}/StorageManager)
 
 target_link_libraries(KeyValueFactory PUBLIC StringKey)
 target_link_libraries(KeyValueFactory PUBLIC StringValue)
@@ -23,3 +27,4 @@ target_link_libraries(BTNodeBufferPoolManager PRIVATE DiskManager)
 
 target_link_libraries(BTree PRIVATE BTNodeBufferPoolManager)
 target_link_libraries(BTree PRIVATE BTNode)
+target_link_libraries(BTree PRIVATE BTNodeSplitManager)

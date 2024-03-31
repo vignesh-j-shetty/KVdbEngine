@@ -4,6 +4,7 @@
 #include "Value.h"
 #include "BTNodeBufferPoolManager.h"
 #include "DiskManager.h"
+#include "BTNodeSplitManager.h"
 #include<memory>
 #include <stack>
 
@@ -20,11 +21,10 @@ class BTree {
     std::shared_ptr<BTNodeBufferPoolManager> bufferPoolManager;
     std::shared_ptr<DiskManager> diskManager;
     std::shared_ptr<Value> emptyValue;
-    void handleSplit(std::shared_ptr<BTNode> node, std::stack<std::shared_ptr<BTNode>> &nodeStack, std::shared_ptr<Key> key, std::shared_ptr<Value> value);
-    void handleRootSplit(std::shared_ptr<BTNode> root, std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void printNode(std::shared_ptr<BTNode> rootNode);
     void debugPrintKeyChild(std::shared_ptr<BTNode> node);
-    std::shared_ptr<BTNode> searchNode(std::shared_ptr<Key> key, std::stack<std::shared_ptr<BTNode>> &nodeStack);
+    std::shared_ptr<BTNode> searchNode(std::shared_ptr<Key> key, std::stack<uint64> &nodeStack);
+    BTNodeSplitManager splitManager;
 };
 
 #endif
