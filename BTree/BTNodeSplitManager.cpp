@@ -26,23 +26,16 @@ void BTNodeSplitManager::handleSplit(std::shared_ptr<BTNode> node, std::stack<ui
             node->split(splittedNode);
             node->compactSpace();
             uint16 midIndex = countBeforeSplit/2;
-            if(insertedIndex < midIndex) {
-                uint16 index = node->insert(key, value);
-                node->setChildID(index, previousLeftChild);
-                node->setChildID(index + 1, previousRightChild);
+            if(insertedIndex != midIndex) {
+                std::shared_ptr<BTNode> nodeToInserted = insertedIndex < midIndex ? node : splittedNode;
+                uint16 index = nodeToInserted->insert(key, value);
+                nodeToInserted->setChildID(index, previousLeftChild);
+                nodeToInserted->setChildID(index + 1, previousRightChild);
                 key = splittedNode->getKey(0);
                 if(splittedNode->getNodeType() == INTERNAL_NODE) {
                     splittedNode->remove(0);
                 }
-            } else if(insertedIndex > midIndex) {
-                uint16 index = splittedNode->insert(key,value);
-                splittedNode->setChildID(index, previousLeftChild);
-                splittedNode->setChildID(index + 1, previousRightChild);
-                key = splittedNode->getKey(0);
-                if(splittedNode->getNodeType() == INTERNAL_NODE) {
-                    splittedNode->remove(0);
-                }
-            } else if(insertedIndex == midIndex) {
+            } else {
                 node->setChildID(node->getItemCount(), previousLeftChild);
                 splittedNode->setChildID(0, previousRightChild);
                 if(node->getNodeType() == LEAF_NODE) {
