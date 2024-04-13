@@ -78,9 +78,13 @@ void Page::insertRecord(char *data, uint16 dataLength, uint16 atIndex) {
     try {
         //Allocate space at end
         allocateSpace(dataLength, atIndex);
-        
     } catch(NoSpaceException error) {
-        throw error;
+        if(dataLength <= getFreeMemorySize()) {
+            compactSpace();
+            allocateSpace(dataLength, atIndex);
+        } else {
+            throw error;
+        }
     }
     char* record = getRecordPointer(atIndex);
     memcpy(record, data, dataLength);
@@ -173,7 +177,20 @@ void Page::compactSpace() {
     memcpy(data, header.otherData, 8);
  }
 
-  void Page::updateOtherData(char *data) {
+void Page::updateOtherData(char *data) {
     memcpy(header.otherData, data, 8);
     _isDirty = true;
+ }
+
+ uint16 Page::getFreeMemorySize() {
+    uint16 currentOffset = *(header.freeBlockList);
+    uint16 totalSize = 0;
+    while (currentOffset) {
+        char *currentBlockPointer = PAGE_END - currentOffset;
+        uint16 *currentBlockSize = (uint16*) currentBlockPointer;
+        uint16 *nextOffset = currentBlockSize + 1;
+        totalSize += (*currentBlockSize + 2);
+        currentOffset = *nextOffset;
+    }
+    return totalSize;
  }

@@ -24,7 +24,6 @@ void BTNodeSplitManager::handleSplit(std::shared_ptr<BTNode> node, std::stack<ui
             uint16 insertedIndex = node->searchCmp(key);
             uint16 countBeforeSplit = node->getItemCount();
             node->split(splittedNode);
-            node->compactSpace();
             uint16 midIndex = countBeforeSplit/2;
             if(insertedIndex != midIndex) {
                 std::shared_ptr<BTNode> nodeToInserted = insertedIndex < midIndex ? node : splittedNode;
@@ -77,7 +76,6 @@ void BTNodeSplitManager::handleRootSplit(std::shared_ptr<BTNode> root, std::shar
     uint16 midIndex = countBeforeSplit/2;
     node->swapID(rootNode);
     node->split(splittedNode);
-    node->compactSpace();
     if(insertIndex <= midIndex) {
         node->insert(key, value);
     } else {

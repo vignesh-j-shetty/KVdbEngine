@@ -71,7 +71,7 @@ class Page {
     PageType getPageType();
     // Compacts memory
     void compactSpace();
-
+    uint16 getFreeMemorySize();
     private:
     char *buffer = nullptr;
     uint64 id;
@@ -92,6 +92,7 @@ class Page {
     void mapPointers();
     void allocateSpace(uint16 size, uint16 atIndex);
     void addBlockToFreeList(uint16 atIndex);
+    
     char *getRecordPointer(uint16 index);
     bool _isDirty = false;
 };
