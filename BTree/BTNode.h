@@ -36,12 +36,14 @@ class BTNode {
     std::shared_ptr<Value> getValue(uint16 index);
     uint16 getItemCount();
     uint64 getChildID(uint16 index);
+    uint16 searchChild(uint64 childID);
     uint64 getID();
     void setChildID(uint16 index, uint64 id);
     NodeType getNodeType();
     void setNodeType(NodeType type);
     void swapID(std::shared_ptr<BTNode> node);
-    void compactSpace();
+    void updateKeyValue(std::shared_ptr<Key> key, std::shared_ptr<Value> value, uint16 index);
+    bool hasMinimum();
     private:
     std::shared_ptr<Page> page;
     char* temporaryRecordBuffer;

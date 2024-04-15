@@ -17,7 +17,6 @@ class BufferPoolManager {
     std::shared_ptr<Page> getPage(uint64 id);
     std::shared_ptr<Page> newPage();
     std::shared_ptr<Page> getRootPage();
-    void setIsPinned(uint64 pageID, bool pinStatus);
     void flushAll();
     private:
     std::shared_ptr<DiskManager> diskManager;

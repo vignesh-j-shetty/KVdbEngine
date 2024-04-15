@@ -5,6 +5,7 @@
 #include "BTNodeBufferPoolManager.h"
 #include "DiskManager.h"
 #include "BTNodeSplitManager.h"
+#include "BTDeletionManager.h"
 #include<memory>
 #include <stack>
 
@@ -15,6 +16,7 @@ class BTree {
         bufferPoolManager->flushAll();
     }
     void insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
+    void remove(std::shared_ptr<Key> key);
     void debugPrint();
     bool isKeyPresent(std::shared_ptr<Key> key);
     private:
@@ -25,6 +27,7 @@ class BTree {
     void debugPrintKeyChild(std::shared_ptr<BTNode> node);
     std::shared_ptr<BTNode> searchNode(std::shared_ptr<Key> key, std::stack<uint64> &nodeStack);
     BTNodeSplitManager splitManager;
+    BTDeletionManager deletionManager;
 };
 
 #endif

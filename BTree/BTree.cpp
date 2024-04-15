@@ -12,6 +12,7 @@ BTree::BTree() : diskManager(new DiskManager("dd.db")) {
     std::shared_ptr<BufferPoolManager> _bufferPoolManager(new BufferPoolManager(diskManager));
     bufferPoolManager = std::shared_ptr<BTNodeBufferPoolManager>(new BTNodeBufferPoolManager(_bufferPoolManager));
     splitManager = BTNodeSplitManager(bufferPoolManager);
+    deletionManager = BTDeletionManager(bufferPoolManager);
 }
 
 void BTree::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
@@ -61,20 +62,26 @@ void BTree::debugPrint() {
 
 void BTree::printNode(std::shared_ptr<BTNode> node) {
     //std::cout<<" | id : "<<node->getID()<<">";
-    std::cout<<" | ";
-    if(node->getNodeType() == LEAF_NODE) {
-        std::cout<<"L ";
+    const bool isLeaf = node->getNodeType() == LEAF_NODE;
+    if(isLeaf) {
+        std::cout<<" || ";
+    } else {
+        std::cout<<" | ";
     }
     uint16 n = node->getItemCount();
     for (uint16 i = 0; i < n; i++) {
         uint64 keyValue = std::any_cast<uint64>(node->getKey(i)->getData());
         std::cout<<keyValue;
         if(i != n - 1) {
-            std::cout<<" - ";
+            std::cout<<" , ";
         }
 
     }
-    std::cout<<" | ";
+    if(isLeaf) {
+        std::cout<<" || ";
+    } else {
+        std::cout<<" | ";
+    }
 }
 
 void BTree::debugPrintKeyChild(std::shared_ptr<BTNode> node) {
@@ -106,4 +113,37 @@ bool BTree::isKeyPresent(std::shared_ptr<Key> key) {
     std::shared_ptr<BTNode> currentNode = searchNode(key, nodeStack);
     uint16 index = currentNode->search(key);
     return index == currentNode->getItemCount() ? false : true;
+}
+
+void BTree::remove(std::shared_ptr<Key> key) {
+    std::stack<uint64> nodeStack;
+    std::shared_ptr<BTNode> currentNode = bufferPoolManager->getRootPage();
+    uint64 nonLeafNodeID = 0;
+    while (!(currentNode->getNodeType() == LEAF_NODE)) {
+        nodeStack.push(currentNode->getID());
+        uint16 index = currentNode->searchCmp(key);
+        uint16 leafNodeIndex = currentNode->search(key);
+        if(leafNodeIndex < currentNode->getItemCount()) {
+            nonLeafNodeID = currentNode->getID();
+        }
+        uint64 id = currentNode->getChildID(index);
+        assert(id != 0);
+        currentNode = bufferPoolManager->getNode(id);
+        assert(currentNode->getItemCount() != 0);
+    }
+    uint16 index = currentNode->search(key);
+    assert(index != currentNode->getItemCount());
+    currentNode->remove(index);
+    if(currentNode->getItemCount() > 0 && nonLeafNodeID != 0) {
+        std::shared_ptr<BTNode> nonLeafNode = bufferPoolManager->getNode(nonLeafNodeID);
+        uint16 _index = nonLeafNode->search(key);
+        assert(_index != nonLeafNode->getItemCount());
+        std::shared_ptr<Key> _key = currentNode->getKey(0);
+        nonLeafNode->updateKeyValue(_key, emptyValue, _index);
+    } else if(currentNode->getItemCount() == 0) {
+        // Handle browing all scenrios
+        uint64 parentID = nodeStack.top();
+        std::shared_ptr<BTNode> parentNode = bufferPoolManager->getNode(parentID);
+        deletionManager.borrow(currentNode, parentNode);
+    }
 }

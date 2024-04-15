@@ -18,9 +18,7 @@ void BTNodeSplitManager::handleSplit(std::shared_ptr<BTNode> node, std::stack<ui
             node->setChildID(index + 1, previousRightChild);
             break;
         } catch(NoSpaceException e) {
-            bufferPoolManager->setIsPinnnedStatus(node->getID(), true);
             std::shared_ptr<BTNode> splittedNode = bufferPoolManager->newNode();
-            bufferPoolManager->setIsPinnnedStatus(splittedNode->getID(), true);
             uint16 insertedIndex = node->searchCmp(key);
             uint16 countBeforeSplit = node->getItemCount();
             node->split(splittedNode);
@@ -53,12 +51,8 @@ void BTNodeSplitManager::handleSplit(std::shared_ptr<BTNode> node, std::stack<ui
                 splittedNode->remove(0);
                 node->setNodeType(INTERNAL_NODE);
                 splittedNode->setNodeType(INTERNAL_NODE);
-                bufferPoolManager->setIsPinnnedStatus(node->getID(), false);
-                bufferPoolManager->setIsPinnnedStatus(splittedNode->getID(), false);
                 break;
             }
-            bufferPoolManager->setIsPinnnedStatus(node->getID(), false);
-            bufferPoolManager->setIsPinnnedStatus(splittedNode->getID(), false);
             if(!nodeStack.empty()) {
                 node = bufferPoolManager->getNode(nodeStack.top());
                 nodeStack.pop();

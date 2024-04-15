@@ -2,7 +2,6 @@
 
 KeyValueFactory::KeyValueFactory(char* buffer) {
     this->buffer = buffer;
-    keySize = (uint8*)(buffer + 1);
 }
 
 std::shared_ptr<Key> KeyValueFactory::getKey() {
@@ -32,6 +31,7 @@ std::shared_ptr<Key> KeyValueFactory::getKey() {
 
 std::shared_ptr<Value> KeyValueFactory::getValue() {
     // 8 is childPointer offset and 2 is keyType and keySize offset
+    uint8 *keySize = (uint8*) (buffer + 9);
     char *p = buffer + *keySize + 2 + 8;
     uint8* type = (uint8*) p;
     p += 1;

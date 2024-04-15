@@ -103,6 +103,7 @@ void Page::readRecord(char *data, uint16 dataLength, uint16 atIndex) {
 }
 
 void Page::removeRecord(uint16 atIndex) {
+    assert(atIndex < getRecordCount());
     addBlockToFreeList(atIndex);
     //Updating Slot Array
     uint16 count = *(header.slotCount) - 1;

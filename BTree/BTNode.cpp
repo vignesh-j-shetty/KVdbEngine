@@ -188,10 +188,6 @@ uint64 BTNode::getID() {
     return page->getID();
 }
 
-void BTNode::compactSpace() {
-    page->compactSpace();
-}
-
 NodeType BTNode::getNodeType() {
     return mapToNodeType(page->getPageType());
 }
@@ -228,4 +224,26 @@ PageType BTNode::mapToPageType(NodeType type) {
         default:
             assert(false && "Unknown NodeType");
     }
+}
+
+void BTNode::updateKeyValue(std::shared_ptr<Key> key, std::shared_ptr<Value> value, uint16 index) {
+    uint64 childID = getChildID(index);
+    page->removeRecord(index);
+    uint16 totalSize = serializeToTemporaryBuffer(key, value);
+    page->insertRecord(temporaryRecordBuffer, totalSize, index);
+    setChildID(index, childID);
+}
+
+bool BTNode::hasMinimum() {
+    return getItemCount() > 1;
+}
+
+uint16 BTNode::searchChild(uint64 childID) {
+    uint16 n = getItemCount();
+    for(uint16 i = 0; i <= n; i++) {
+        if(getChildID(i) == childID) {
+            return i;
+        }
+    }
+    return n + 1;
 }

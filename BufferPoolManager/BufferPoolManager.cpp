@@ -24,16 +24,6 @@ std::shared_ptr<Page> BufferPoolManager::getRootPage() {
     return getPage(HEADER_SIZE);
 }
 
-void BufferPoolManager::setIsPinned(uint64 pageID, bool pinStatus) {
-    for(uint16 i = 0; i < frameList.size(); i++) {
-        if(frameList[i].pageCache->getID() == pageID) {
-            frameList[i].isPinned = pinStatus;
-            return;
-        }
-    }
-    assert(false && "Unabled to find item in BufferPool Cache");
-}
-
 void BufferPoolManager::flushAll() {
     for(uint16 i = 0; i < frameList.size(); i++) {
         std::shared_ptr<Page> page = frameList[i].pageCache;
@@ -56,7 +46,7 @@ void BufferPoolManager::addToCache(std::shared_ptr<Page> page) {
             if(frameList[clockHand].accessBit) {
                 frameList[clockHand].accessBit = false;
                 clockHand = (clockHand + 1) % frameList.size();
-            } else if(!frameList[clockHand].isPinned) {
+            } else if(frameList[clockHand].pageCache.use_count() == 1) {
                 frameList[clockHand].accessBit = true;
                 if(frameList[clockHand].pageCache->isDirty()) {
                     diskManager->writePage(frameList[clockHand].pageCache);

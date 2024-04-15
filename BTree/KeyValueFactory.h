@@ -19,7 +19,6 @@ class KeyValueFactory {
     std::shared_ptr<Value> getValue();
     private:
     char *buffer;
-    uint8 *keySize;
 
 };
 #endif

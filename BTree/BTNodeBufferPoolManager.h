@@ -15,7 +15,6 @@ class BTNodeBufferPoolManager {
     std::shared_ptr<BTNode> getNode(uint64 id);
     std::shared_ptr<BTNode> newNode();
     std::shared_ptr<BTNode> getRootPage();
-    void setIsPinnnedStatus(uint64 pageID, bool pinStatus);
     void flushAll();
     private:
     std::shared_ptr<BufferPoolManager> bufferPoolManager;
