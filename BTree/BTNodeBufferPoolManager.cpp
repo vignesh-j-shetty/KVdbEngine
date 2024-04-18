@@ -17,3 +17,7 @@ std::shared_ptr<BTNode> BTNodeBufferPoolManager::getRootPage() {
 void BTNodeBufferPoolManager::flushAll() {
     bufferPoolManager->flushAll();
 }
+
+void BTNodeBufferPoolManager::deleteNode(uint64 id) {
+    bufferPoolManager->deletePage(id);
+}

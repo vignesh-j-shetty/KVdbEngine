@@ -3,13 +3,19 @@
 #include <memory>
 #include "BTNodeBufferPoolManager.h"
 
+enum BTNodeMergeType {
+    RIGHT_MERGE, LEFT_MERGE
+};
+
 class BTDeletionManager {
     public:
     BTDeletionManager(std::shared_ptr<BTNodeBufferPoolManager> bufferPoolManager);
     BTDeletionManager() {
-        
+
     }
-    void borrow(std::shared_ptr<BTNode> node, std::shared_ptr<BTNode> parentNode);
+    // Returns true if borrowed from sibling nodes
+    bool borrow(std::shared_ptr<BTNode> node, std::shared_ptr<BTNode> parentNode);
+    BTNodeMergeType merge(std::shared_ptr<BTNode> node, std::shared_ptr<BTNode> parentNode);
     private:
     std::shared_ptr<BTNodeBufferPoolManager> bufferPoolManager;
     std::shared_ptr<Value> emptyValue;

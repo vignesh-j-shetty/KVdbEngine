@@ -7,6 +7,7 @@
 #include <ctime>
 #include <set>
 #include<vector>
+
 // void print(BTNode &node) {
 //     for(uint8 i = 0; i < node.getItemCount(); i++) {
 //         std::string key = std::any_cast<std::string>(node.getKey(i)->getData());
@@ -53,7 +54,7 @@ void random_insert(BTree &btree, std::vector<uint64> &generatedNumber) {
     std::set<uint64> generatedValue;
     std::shared_ptr<Key> key(new UIntKey(0));
     std::shared_ptr<Value> value(new StringValue("vignesh"));
-    const uint64 itemCount = 30;
+    const uint64 itemCount = 10;
     for(uint64 i = 0; i < itemCount; i++) {
         uint64 randomnumber = getGenerateNewNumber(generatedValue, maxNumber);
         generatedNumber.push_back(randomnumber);
@@ -75,22 +76,20 @@ int main() {
     //     std::shared_ptr<Key> key(new UIntKey(generatedNumbers[i]));
     //     if(!btree.isKeyPresent(key)) {
     //         std::cout<<"Error "<<generatedNumbers[i]<<" "<<i<<std::endl;
-    //         break;
     //     }
     // }
     std::shared_ptr<Key> key(new UIntKey(3));
     btree.debugPrint();
-    const uint16 n1 = 7;
-    uint64 keysToRemove1[n1] = {72 , 73 , 78 , 87 , 92 , 97, 99};
+    const uint16 n1 = 3;
+    uint64 keysToRemove1[n1] = {23, 30, 44};
     for(uint16 i = 0; i < n1; i++) {
         key->setData(keysToRemove1[i]);
         btree.remove(key);
     }
     std::cout<<"\nAfter deletion 1\n";
     btree.debugPrint();
-
-    const uint16 n2 = 7;
-    uint64 keysToRemove2[n2] = {49 , 57 , 58 , 60 , 65, 67, 69};
+    const uint16 n2 = 2;
+    uint64 keysToRemove2[n2] = {9, 7};
     for(uint16 i = 0; i < n2; i++) {
         key->setData(keysToRemove2[i]);
         btree.remove(key);
@@ -100,4 +99,3 @@ int main() {
     std::cout<<"\n---END---- ";
     return 0;
 }
-

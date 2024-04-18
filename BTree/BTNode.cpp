@@ -12,7 +12,7 @@ BTNode::BTNode(std::shared_ptr<Page> page) {
 
 uint16 BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
     uint16 count = page->getRecordCount();
-
+    uint64 lastChildID = getChildID(count);
     if(count == 0) {
         uint16 totalSize = serializeToTemporaryBuffer(key, value);
         try {
@@ -40,6 +40,7 @@ uint16 BTNode::insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value) {
     // When greater than all elements in node
     uint16 totalSize = serializeToTemporaryBuffer(key, value);
     page->insertRecord(temporaryRecordBuffer, totalSize, count);
+    setChildID(count, lastChildID);
     return count;
 }
 
@@ -246,4 +247,15 @@ uint16 BTNode::searchChild(uint64 childID) {
         }
     }
     return n + 1;
+}
+
+void BTNode::merge(std::shared_ptr<BTNode> node) {
+    uint16 n = node->getItemCount();
+    for(uint16 i = 0; i < n; i++) {
+        std::shared_ptr<Key> key = node->getKey(i);
+        std::shared_ptr<Value> value = node->getValue(i);
+        uint16 insertedIndex = insert(key, value);
+        setChildID(insertedIndex, node->getChildID(i));
+    }
+    setChildID(getItemCount(), node->getChildID(n));
 }

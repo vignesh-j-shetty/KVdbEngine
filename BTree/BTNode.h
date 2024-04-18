@@ -30,6 +30,7 @@ class BTNode {
     uint16 insert(std::shared_ptr<Key> key, std::shared_ptr<Value> value);
     void remove(uint16 index);
     void split(std::shared_ptr<BTNode> splittedNode);
+    void merge(std::shared_ptr<BTNode> node);
     uint16 search(std::shared_ptr<Key> key);
     uint16 searchCmp(std::shared_ptr<Key> key);
     std::shared_ptr<Key> getKey(uint16 index);

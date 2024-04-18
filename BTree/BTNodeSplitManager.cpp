@@ -1,6 +1,5 @@
 #include "BTNodeSplitManager.h"
 
-
 BTNodeSplitManager::BTNodeSplitManager(std::shared_ptr<BTNodeBufferPoolManager> bufferPoolManager) {
     this->bufferPoolManager = bufferPoolManager;
     emptyValue = std::shared_ptr<Value>(new StringValue(""));
@@ -23,7 +22,7 @@ void BTNodeSplitManager::handleSplit(std::shared_ptr<BTNode> node, std::stack<ui
             uint16 countBeforeSplit = node->getItemCount();
             node->split(splittedNode);
             uint16 midIndex = countBeforeSplit/2;
-            if(insertedIndex != midIndex) {
+            if(insertedIndex != midIndex || node->getNodeType() == ROOT_NODE) {
                 std::shared_ptr<BTNode> nodeToInserted = insertedIndex < midIndex ? node : splittedNode;
                 uint16 index = nodeToInserted->insert(key, value);
                 nodeToInserted->setChildID(index, previousLeftChild);

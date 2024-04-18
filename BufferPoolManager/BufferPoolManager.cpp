@@ -59,3 +59,7 @@ void BufferPoolManager::addToCache(std::shared_ptr<Page> page) {
         }
     }
 }
+
+void BufferPoolManager::deletePage(uint64 id) {
+    diskManager->deletePage(id);
+}
