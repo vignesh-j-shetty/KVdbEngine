@@ -45,6 +45,7 @@ class BTNode {
     void swapID(std::shared_ptr<BTNode> node);
     void updateKeyValue(std::shared_ptr<Key> key, std::shared_ptr<Value> value, uint16 index);
     bool hasMinimum();
+    bool isRootNode();
     private:
     std::shared_ptr<Page> page;
     char* temporaryRecordBuffer;

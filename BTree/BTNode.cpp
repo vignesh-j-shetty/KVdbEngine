@@ -258,4 +258,11 @@ void BTNode::merge(std::shared_ptr<BTNode> node) {
         setChildID(insertedIndex, node->getChildID(i));
     }
     setChildID(getItemCount(), node->getChildID(n));
+    for(uint16 i = 0; i < n; i++) {
+        node->remove(i);
+    }
+}
+
+bool BTNode::isRootNode() {
+    return getID() == 16;
 }
