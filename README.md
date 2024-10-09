@@ -1,9 +1,11 @@
 # KVdbEngine
 
-A straightforward, single-threaded key-value store built on a B+ Tree structure. It is designed to handle over 80 million key-value pairs and supports read and write operations with a time complexity of O(log n).
+A straightforward, single-threaded key-value store built based on a B+ Tree structure. It is designed to handle over 80 million key-value pairs and supports read and write operations with a time complexity of O(log n).
 
 Implemented an in-memory page cache to optimize data retrieval for pages with frequent read or write operations. The cache uses the Clock replacement algorithm to manage memory efficiently.
 While exit all the dirty pages (updated in cache but not updated in disk) from cache memory is flushed to disk.
+
+Page size and cache size are configurable but project needs to be recompiled.
 
 ## Usage
     
